@@ -4,6 +4,7 @@
 from bottle import default_app, get, run
 from beaker.middleware import SessionMiddleware
 import easyquotation
+from cron import cronScheduler
 
 # 设置session参数
 session_opts = {
@@ -25,3 +26,4 @@ def callback():
 if __name__ == '__main__':
     app_argv = SessionMiddleware(default_app(), session_opts)
     run(app=app_argv, host='0.0.0.0', port=9090, debug=True, reloader=True)
+    cronScheduler.run()
