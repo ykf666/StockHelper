@@ -1,4 +1,4 @@
-six
+ix
 requests
 yarl
 aiohttp>=1.1.1
