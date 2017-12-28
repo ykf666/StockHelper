@@ -4,6 +4,8 @@ import random
 import string
 
 wx_token = "RZmUQDAuNjf3y6i2kL0IX8WBMOpPraEY"
+wx_encodingAESKey = "z4dGm7I9k5xtPDj7ucLgHK0xwCoIVGFOuOW90cOsnga"
+wx_appid = "wx22b402d2c52b8ac1"
 
 
 def wxtoken():

@@ -29,11 +29,11 @@ def index():
     return "welcome to my world!"
 
 
-@app.route('/wxauth')
-def wxauth():
-    req_params = request.params
-    print(req_params)
-    return req_params
+@app.route('/wx')
+def wx():
+    p_dict = request.params.dict
+    print(p_dict)
+    return p_dict["echostr"]
 
 
 if __name__ == '__main__':
