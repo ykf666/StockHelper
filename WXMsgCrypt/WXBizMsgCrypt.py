@@ -15,14 +15,8 @@ import time
 import struct
 from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
-import sys
 import socket
-from importlib import reload
-from WXBizMsgCrypt import ierror
-
-reload(sys)
-
-sys.setdefaultencoding('utf-8')
+from WXMsgCrypt import ierror
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
@@ -53,7 +47,7 @@ class SHA1:
         @return: 安全签名
         """
         try:
-            sortlist = [token, timestamp, nonce, encrypt]
+            sortlist = [token, timestamp, nonce, encrypt.decode()]
             sortlist.sort()
             sha = hashlib.sha1()
             sha.update("".join(sortlist))
@@ -153,7 +147,7 @@ class Prpcrypt(object):
         @return: 加密得到的字符串
         """
         # 16位随机字符串添加到明文开头
-        text = self.get_random_str() + struct.pack("I", socket.htonl(len(text))) + text + appid
+        text = self.get_random_str() + struct.pack("I", socket.htonl(len(text))).decode() + text + appid
         # 使用自定义的填充方式对明文进行补位填充
         pkcs7 = PKCS7Encoder()
         text = pkcs7.encode(text)
@@ -201,7 +195,7 @@ class Prpcrypt(object):
         """ 随机生成16位字符串
         @return: 16位字符串
         """
-        rule = string.letters + string.digits
+        rule = string.ascii_letters + string.digits
         str_result = random.sample(rule, 16)
         return "".join(str_result)
 

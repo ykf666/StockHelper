@@ -4,9 +4,9 @@
 # Author: jonyqin
 # Created Time: Thu 11 Sep 2014 03:55:41 PM CST
 # File Name: demo.py
-# Description: WXBizMsgCrypt 使用demo文件
+# Description: WXMsgCrypt 使用demo文件
 #########################################################################
-from WXBizMsgCrypt import WXBizMsgCrypt
+from WXMsgCrypt import WXBizMsgCrypt
 
 if __name__ == "__main__":
     """ 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     nonce = "1320562132"
     appid = "wx2c2769f8efd9abc2"
     # 测试加密接口
-    encryp_test = WXBizMsgCrypt(token, encodingAESKey, appid)
+    encryp_test = WXBizMsgCrypt.WXBizMsgCrypt(token, encodingAESKey, appid)
     ret, encrypt_xml = encryp_test.EncryptMsg(to_xml, nonce)
     print(ret, encrypt_xml)
 
@@ -50,6 +50,6 @@ if __name__ == "__main__":
                         yJvnhvQl+q5rv1ixrcpCumEPo5MJSgM9ehVsNPfUM669WuMyVWQLCzpu9GhglF2PE=]]>
                     </Encrypt>
                 </xml>"""
-    decrypt_test = WXBizMsgCrypt(token, encodingAESKey, appid)
+    decrypt_test = WXBizMsgCrypt.WXBizMsgCrypt(token, encodingAESKey, appid)
     ret, decryp_xml = decrypt_test.DecryptMsg(from_xml, msg_sign, timestamp, nonce)
     print(ret, decryp_xml)

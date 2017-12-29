@@ -5,6 +5,7 @@ import string
 import hashlib
 from requests import get
 import json
+import WXMsgCrypt
 
 wx_token = "RZmUQDAuNjf3y6i2kL0IX8WBMOpPraEY"
 wx_encodingAESKey = "z4dGm7I9k5xtPDj7ucLgHK0xwCoIVGFOuOW90cOsnga"
@@ -18,10 +19,11 @@ def get_access_token():
     return resp["access_token"]
 
 
-def wxtoken():
-    return wx_token
+def wx_response():
+    return WXMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
 
 
+# 生成token时使用
 def gen_random_str(length):
     ran_str = ''.join(random.sample(string.ascii_letters + string.digits, length))
     print(ran_str)

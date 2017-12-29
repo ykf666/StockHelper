@@ -8,6 +8,7 @@ from cron import taskjobs
 from urllib import parse
 from canister import Canister
 
+
 app = Bottle()
 bottle_config = app.config.load_config("config/app.conf")
 app.install(Canister())
@@ -23,10 +24,15 @@ def index():
 def wx():
     # 读取url参数
     qs = parse.parse_qs(request.query_string)
+    sign = qs["signature"][0]
+    app.log.info("Signature: %s" % sign)
     # 读取post数据
     fp = request.body.read().decode()
     app.log.info("POST data: %s" % fp)
-    app.log.info("Signature: %s" % qs["signature"][0])
+
+    decrypt_test = WXBizMsgCrypt(token, encodingAESKey, appid)
+    ret, decryp_xml = decrypt_test.DecryptMsg(from_xml, msg_sign, timestamp, nonce)
+    print(ret, decryp_xml)
     return ""
 
 
