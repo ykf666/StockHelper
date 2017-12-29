@@ -26,8 +26,8 @@ def wx():
     # 读取post数据
     fp = request.body.read().decode()
     app.log.info("POST data: %s" % fp)
-    signature = qs["signature"][0]
-    return signature
+    app.log.info("Signature: %s" % qs["signature"][0])
+    return ""
 
 
 if __name__ == '__main__':
