@@ -3,49 +3,38 @@
 
 import json
 from apscheduler.schedulers.background import BackgroundScheduler
-from beaker.middleware import SessionMiddleware
 from bottle import Bottle, run, request
 from cron import taskjobs
+from urllib import parse
+from canister import Canister
 
 app = Bottle()
-bottle_config = {
-    'host': 'localhost',
-    'port': 8080,
-    'debug': False
-}
-
-# 设置session参数
-session_opts = {
-    'session.type': 'file',
-    'session.cookie_expires': 1200,
-    'session.data_dir': '/tmp/stockHelper/sessions',
-    'session.auto': True
-}
+bottle_config = app.config.load_config("config/app.conf")
+app.install(Canister())
 
 
 @app.route('/')
 def index():
-    print(request.environ.get("beaker.session"))
-    return "welcome to my world!"
+    app.log.info("access web root index...")
+    return "Welcome to python web!"
 
 
-@app.route('/wx')
+@app.route('/wx', method="POST")
 def wx():
-    p_dict = request.params.dict
-    print(p_dict)
-    return p_dict["echostr"]
+    # 读取url参数
+    qs = parse.parse_qs(request.query_string)
+    # 读取post数据
+    fp = request.body.read().decode()
+    app.log.info("POST data: %s" % fp)
+    signature = qs["signature"][0]
+    return signature
 
 
 if __name__ == '__main__':
-    with open("config.json", 'r') as f:
+    with open("config/jobs.json", 'r') as f:
         conf = json.load(f)
-    if "session" in conf:
-        session_opts = conf["session"]
-    if "bottle" in conf:
-        bottle_config = conf["bottle"]
     if "jobs" in conf:
         sched_jobs = conf["jobs"]
-
     sched = BackgroundScheduler()
     for job in sched_jobs:
         if job.pop("enable").lower() == "true":
@@ -55,5 +44,4 @@ if __name__ == '__main__':
     add_jobs = sched.get_jobs()
     if add_jobs.__len__() > 0:
         sched.start()
-    app_argv = SessionMiddleware(app, session_opts)
-    run(app=app_argv, **bottle_config)
+    run(app, **bottle_config)
