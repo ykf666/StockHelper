@@ -47,10 +47,10 @@ class SHA1:
         @return: 安全签名
         """
         try:
-            sortlist = [token, timestamp, nonce, encrypt.decode()]
+            sortlist = [token, timestamp, nonce, encrypt if isinstance(encrypt, str) else encrypt.decode()]
             sortlist.sort()
             sha = hashlib.sha1()
-            sha.update("".join(sortlist))
+            sha.update("".join(sortlist).encode("utf-8"))
             return ierror.WXBizMsgCrypt_OK, sha.hexdigest()
         except Exception as e:
             print(e)

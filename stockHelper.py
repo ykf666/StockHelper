@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from bottle import Bottle, run, request
 from cron import taskjobs
 from urllib import parse
-from canister import Canister
+from bottleplugins.canister import Canister
 
 
 app = Bottle()
@@ -16,7 +16,7 @@ app.install(Canister())
 
 @app.route('/')
 def index():
-    app.log.info("access web root index...")
+    # app.log.info("access web root index...")
     return "Welcome to python web!"
 
 
@@ -29,10 +29,6 @@ def wx():
     # 读取post数据
     fp = request.body.read().decode()
     app.log.info("POST data: %s" % fp)
-
-    decrypt_test = WXBizMsgCrypt(token, encodingAESKey, appid)
-    ret, decryp_xml = decrypt_test.DecryptMsg(from_xml, msg_sign, timestamp, nonce)
-    print(ret, decryp_xml)
     return ""
 
 
