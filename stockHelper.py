@@ -29,7 +29,6 @@ def wx():
     signature = qs["signature"][0]
     timestamp = qs["timestamp"][0]
     nonce = qs["nonce"][0]
-    openid = qs["openid"][0]
     msg_signature = qs["msg_signature"][0]
     app.log.info("Signature: %s" % signature)
     # 读取post数据
@@ -39,7 +38,7 @@ def wx():
     ret, decrypt_xml = decrypt(from_xml, msg_signature, timestamp, nonce)
     app.log.info("Decrypt data: %s, %s" % (ret, decrypt_xml))
 
-    s_xml = template('send_msg', touser=openid, fromuser=wx_account,
+    s_xml = template('send_msg', touser=extract(decrypt_xml, "FromUserName"), fromuser=wx_account,
                      createtime=int(time.time()), content="thank you", msgid=extract(decrypt_xml, "MsgId"))
     app.log.info("Response xml: %s" % s_xml)
     # 加密返回消息字符串
