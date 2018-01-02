@@ -21,7 +21,7 @@ def get_access_token():
 
 
 def decrypt(from_xml, msg_sign, timestamp, nonce):
-    process = WXBizMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
+    process = WXBizMsgCrypt.WXBizMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
     ret, decryp_xml = process.DecryptMsg(from_xml, msg_sign, timestamp, nonce)
     return ret, decryp_xml
 
