@@ -5,7 +5,7 @@ import string
 import hashlib
 from requests import get
 import json
-import WXMsgCrypt
+from WXMsgCrypt import WXBizMsgCrypt
 
 account = "gh_fd46ac560288"
 wx_token = "RZmUQDAuNjf3y6i2kL0IX8WBMOpPraEY"
@@ -21,7 +21,7 @@ def get_access_token():
 
 
 def decrypt(from_xml, msg_sign, timestamp, nonce):
-    process = WXMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
+    process = WXBizMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
     ret, decryp_xml = process.DecryptMsg(from_xml, msg_sign, timestamp, nonce)
     return ret, decryp_xml
 
