@@ -5,6 +5,7 @@ import string
 import hashlib
 from requests import get
 from WXMsgCrypt import WXBizMsgCrypt
+import xml.etree.cElementTree as ET
 
 wx_account = "gh_fd46ac560288"
 wx_token = "RZmUQDAuNjf3y6i2kL0IX8WBMOpPraEY"
@@ -33,6 +34,16 @@ def encrypt(to_xml, nonce):
 def get_msg_id():
     return random.randint(0, 2 ** 64 - 1)
 
+
+# 解析xml，获取nodename节点的值
+def extract(xmltext, nodename):
+    try:
+        xml_tree = ET.fromstring(xmltext)
+        node = xml_tree.find(nodename)
+        return node.text
+    except Exception as e:
+        print(e)
+        return None
 
 # 1、微信后台设置token令牌时使用，32位字符串
 # 2、返回消息时，生成随机字符串，8位字符串
