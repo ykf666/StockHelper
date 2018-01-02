@@ -35,7 +35,7 @@ def wx():
     app.log.info("POST data: %s" % from_xml)
 
     ret, decrypt_xml = decrypt(from_xml, msg_signature, timestamp, nonce)
-    app.log.info("Receive message from %s: %s" % openid, decrypt_xml)
+    app.log.info("Receive message from %s: %s" % (openid, decrypt_xml))
 
     return ""
 
