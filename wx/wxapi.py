@@ -6,7 +6,7 @@ import hashlib
 from requests import get
 from WXMsgCrypt import WXBizMsgCrypt
 
-account = "gh_fd46ac560288"
+wx_account = "gh_fd46ac560288"
 wx_token = "RZmUQDAuNjf3y6i2kL0IX8WBMOpPraEY"
 wx_encodingAESKey = "z4dGm7I9k5xtPDj7ucLgHK0xwCoIVGFOuOW90cOsnga"
 wx_appid = "wx22b402d2c52b8ac1"
@@ -24,10 +24,21 @@ def decrypt(from_xml, msg_sign, timestamp, nonce):
     return ret, decryp_xml
 
 
-# 生成token时使用
-def gen_random_str(length):
-    ran_str = ''.join(random.sample(string.ascii_letters + string.digits, length))
-    print(ran_str)
+def encrypt(to_xml, nonce):
+    process = WXBizMsgCrypt.WXBizMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
+    ret, encrypt_xml = process.EncryptMsg(to_xml, nonce)
+    return ret, encrypt_xml
+
+
+def get_msg_id():
+    return random.randint(0, 2 ** 64 - 1)
+
+
+# 1、微信后台设置token令牌时使用，32位字符串
+# 2、返回消息时，生成随机字符串，8位字符串
+def get_random_str(strlen):
+    ran_str = ''.join(random.sample(string.ascii_letters + string.digits, strlen))
+    return ran_str
 
 
 # 微信公众号配置服务器时，校验加密字符串
@@ -49,4 +60,4 @@ def check_signature():
 
 
 if __name__ == "__main__":
-    print(get_access_token())
+    print(get_msg_id())
