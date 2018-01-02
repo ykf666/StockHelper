@@ -7,7 +7,7 @@ from bottle import Bottle, run, request
 from cron import taskjobs
 from urllib import parse
 from bottleplugins.canister import Canister
-
+from wx.wxapi import decrypt
 
 app = Bottle()
 bottle_config = app.config.load_config("config/app.conf")
@@ -24,11 +24,19 @@ def index():
 def wx():
     # 读取url参数
     qs = parse.parse_qs(request.query_string)
-    sign = qs["signature"][0]
-    app.log.info("Signature: %s" % sign)
+    signature = qs["signature"][0]
+    timestamp = qs["timestamp"][0]
+    nonce = qs["nonce"][0]
+    openid = qs["openid"][0]
+    msg_signature = qs["msg_signature"][0]
+    app.log.info("Signature: %s" % signature)
     # 读取post数据
-    fp = request.body.read().decode()
-    app.log.info("POST data: %s" % fp)
+    from_xml = request.body.read().decode()
+    app.log.info("POST data: %s" % from_xml)
+
+    ret, decrypt_xml = decrypt(from_xml, msg_signature, timestamp, nonce)
+    app.log.info("Receive message from %s: %s" % openid, decrypt_xml)
+
     return ""
 
 
