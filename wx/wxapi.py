@@ -7,12 +7,10 @@ from requests import get
 import json
 import WXMsgCrypt
 
-
 account = "gh_fd46ac560288"
 wx_token = "RZmUQDAuNjf3y6i2kL0IX8WBMOpPraEY"
 wx_encodingAESKey = "z4dGm7I9k5xtPDj7ucLgHK0xwCoIVGFOuOW90cOsnga"
 wx_appid = "wx22b402d2c52b8ac1"
-process = WXMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
 
 
 def get_access_token():
@@ -23,6 +21,7 @@ def get_access_token():
 
 
 def decrypt(from_xml, msg_sign, timestamp, nonce):
+    process = WXMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
     ret, decryp_xml = process.DecryptMsg(from_xml, msg_sign, timestamp, nonce)
     return ret, decryp_xml
 
