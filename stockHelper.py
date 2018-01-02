@@ -3,7 +3,7 @@
 
 import json
 from apscheduler.schedulers.background import BackgroundScheduler
-from bottle import Bottle, run, request, template
+from bottle import Bottle, run, request, template, response
 from cron import taskjobs
 from urllib import parse
 from bottleplugins.canister import Canister
@@ -23,6 +23,7 @@ def index():
 
 @app.route('/wx', method="POST")
 def wx():
+    response.content_type = 'application/xml; charset=utf-8'
     # 读取url参数
     qs = parse.parse_qs(request.query_string)
     signature = qs["signature"][0]
