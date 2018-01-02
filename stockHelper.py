@@ -3,7 +3,7 @@
 
 import json
 from apscheduler.schedulers.background import BackgroundScheduler
-from bottle import Bottle, run, request, SimpleTemplate
+from bottle import Bottle, run, request, template
 from cron import taskjobs
 from urllib import parse
 from bottleplugins.canister import Canister
@@ -38,9 +38,8 @@ def wx():
     ret, decrypt_xml = decrypt(from_xml, msg_signature, timestamp, nonce)
     app.log.info("Decrypt data: %s, %s" % (ret, decrypt_xml))
 
-    template = SimpleTemplate('views/send_msg.tpl')
-    s_xml = template.render(touser=openid, fromuser=wx_account, createtime=int(time.time()),
-                            content="thank you", msgid=get_msg_id())
+    s_xml = template('send_msg', touser=openid, fromuser=wx_account,
+                     createtime=int(time.time(), content="thank you", msgid=get_msg_id()))
     app.log.info("Response xml: %s" % s_xml)
     # 加密返回消息字符串
     ret, to_xml = encrypt(s_xml, get_random_str(8))
