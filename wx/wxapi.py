@@ -4,7 +4,6 @@ import random
 import string
 import hashlib
 from requests import get
-import json
 from WXMsgCrypt import WXBizMsgCrypt
 
 account = "gh_fd46ac560288"
@@ -16,8 +15,7 @@ wx_appid = "wx22b402d2c52b8ac1"
 def get_access_token():
     resp = get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&"
                "appid=wx22b402d2c52b8ac1&secret=35f4c38e139897fd17a668eb3144de44")
-    resp = json.loads(resp.json())
-    return resp["access_token"]
+    return resp.json()
 
 
 def decrypt(from_xml, msg_sign, timestamp, nonce):
@@ -51,4 +49,4 @@ def check_signature():
 
 
 if __name__ == "__main__":
-    print(check_signature())
+    print(get_access_token())

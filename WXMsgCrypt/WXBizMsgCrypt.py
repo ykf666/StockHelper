@@ -50,7 +50,7 @@ class SHA1:
             sortlist = [token, timestamp, nonce, encrypt if isinstance(encrypt, str) else encrypt.decode()]
             sortlist.sort()
             sha = hashlib.sha1()
-            sha.update("".join(sortlist).encode("utf-8"))
+            sha.update("".join(sortlist).encode("ascii"))
             return ierror.WXBizMsgCrypt_OK, sha.hexdigest()
         except Exception as e:
             print(e)
@@ -147,7 +147,7 @@ class Prpcrypt(object):
         @return: 加密得到的字符串
         """
         # 16位随机字符串添加到明文开头
-        text = self.get_random_str() + struct.pack("I", socket.htonl(len(text))).decode() + text + appid
+        text = self.get_random_str() + str(struct.pack("I", socket.htonl(len(text)))) + text + appid
         # 使用自定义的填充方式对明文进行补位填充
         pkcs7 = PKCS7Encoder()
         text = pkcs7.encode(text)
@@ -174,7 +174,7 @@ class Prpcrypt(object):
             print(e)
             return ierror.WXBizMsgCrypt_DecryptAES_Error, None
         try:
-            pad = ord(plain_text[-1])
+            pad = plain_text[-1]
             # 去掉补位字符串
             # pkcs7 = PKCS7Encoder()
             # plain_text = pkcs7.encode(plain_text)
@@ -182,7 +182,7 @@ class Prpcrypt(object):
             content = plain_text[16:-pad]
             xml_len = socket.ntohl(struct.unpack("I", content[: 4])[0])
             xml_content = content[4: xml_len + 4]
-            from_appid = content[xml_len + 4:]
+            from_appid = content[xml_len + 4:].decode("utf-8")
         except Exception as e:
             print(e)
             return ierror.WXBizMsgCrypt_IllegalBuffer, None
@@ -257,4 +257,4 @@ class WXBizMsgCrypt(object):
             return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         ret, xml_content = pc.decrypt(encrypt, self.appid)
-        return ret, xml_content
+        return ret, xml_content.decode()
