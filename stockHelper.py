@@ -39,7 +39,7 @@ def wx():
     app.log.info("Decrypt data: %s, %s" % (ret, decrypt_xml))
 
     s_xml = template('send_msg', touser=extract(decrypt_xml, "FromUserName"), fromuser=wx_account,
-                     createtime=int(time.time()), content="thank you", msgid=extract(decrypt_xml, "MsgId"))
+                     createtime=int(time.time()), content="thank you")
     app.log.info("Response xml: %s" % s_xml)
     # 加密返回消息字符串
     ret, to_xml = encrypt(s_xml, get_random_str(8))
