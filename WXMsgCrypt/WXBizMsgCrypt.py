@@ -118,8 +118,8 @@ class PKCS7Encoder():
         if amount_to_pad == 0:
             amount_to_pad = self.block_size
         # 获得补位所用的字符
-        pad = chr(amount_to_pad)
-        return text + to_binary(pad * amount_to_pad)
+        pad = to_binary(chr(amount_to_pad))
+        return text + pad * amount_to_pad
 
     @staticmethod
     def decode(decrypted):
@@ -144,8 +144,9 @@ class Prpcrypt(object):
 
     def encrypt(self, text, appid):
         """对明文进行加密
-        @param text: 需要加密的明文
-        @return: 加密得到的字符串
+        :param text: 需要加密的明文
+        :param appid: 公众号AppId
+        :return: 加密得到的字符串
         """
         # 16位随机字符串添加到明文开头
         text = to_binary(self.get_random_str()) + struct.pack("I", socket.htonl(len(text))) + to_binary(text) + appid
