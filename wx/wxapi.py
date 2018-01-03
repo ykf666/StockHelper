@@ -30,7 +30,7 @@ def encrypt(to_xml, nonce):
     return ret, encrypt_xml
 
 
-def get_msg_id():
+def get_random_int():
     return random.randint(0, 2 ** 64 - 1)
 
 
@@ -43,6 +43,7 @@ def extract(xmltext, nodename):
     except Exception as e:
         print(e)
         return None
+
 
 # 1、微信后台设置token令牌时使用，32位字符串
 # 2、返回消息时，生成随机字符串，8位字符串
@@ -67,7 +68,3 @@ def check_signature():
     encrystr = hashlib.sha1(t.encode("utf-8")).hexdigest()
     print(encrystr)
     return params["signature"] == encrystr
-
-
-if __name__ == "__main__":
-    print(get_msg_id())

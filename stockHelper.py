@@ -7,7 +7,7 @@ from bottle import Bottle, run, request, template, response
 from cron import taskjobs
 from urllib import parse
 from bottleplugins.canister import Canister
-from wx.wxapi import encrypt, decrypt, wx_account, get_msg_id, get_random_str, extract
+from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
 
 app = Bottle()
@@ -39,10 +39,10 @@ def wx():
     app.log.info("Decrypt data: %s, %s" % (ret, decrypt_xml))
 
     s_xml = template('send_msg', touser=extract(decrypt_xml, "FromUserName"), fromuser=wx_account,
-                     createtime=int(time.time()), content="thank you")
+                     createtime=int(time.time()), content="二哈")
     app.log.info("Response xml: %s" % s_xml)
     # 加密返回消息字符串
-    ret, to_xml = encrypt(s_xml, get_random_str(8))
+    ret, to_xml = encrypt(s_xml, nonce)
     app.log.info("Response encrypt xml: %s" % to_xml)
     return to_xml
 
