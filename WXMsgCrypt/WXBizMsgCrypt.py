@@ -17,6 +17,7 @@ from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
 import socket
 from WXMsgCrypt import ierror
+from WXMsgCrypt.cryptutil import to_text, to_binary
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
@@ -47,10 +48,10 @@ class SHA1:
         @return: 安全签名
         """
         try:
-            sortlist = [token, timestamp, nonce, encrypt if isinstance(encrypt, str) else encrypt.decode()]
+            sortlist = [token, timestamp, nonce, to_binary(encrypt)]
             sortlist.sort()
             sha = hashlib.sha1()
-            sha.update("".join(sortlist).encode("ascii"))
+            sha.update(to_binary("").join(sortlist))
             return ierror.WXBizMsgCrypt_OK, sha.hexdigest()
         except Exception as e:
             print(e)
@@ -92,10 +93,10 @@ class XMLParse:
         @return: 生成的xml字符串
         """
         resp_dict = {
-            'msg_encrypt': encrypt if isinstance(encrypt, str) else encrypt.decode(),
-            'msg_signaturet': signature,
-            'timestamp': timestamp,
-            'nonce': nonce,
+            'msg_encrypt': to_text(encrypt),
+            'msg_signaturet': to_text(signature),
+            'timestamp': to_text(timestamp),
+            'nonce': to_text(nonce),
         }
         resp_xml = self.AES_TEXT_RESPONSE_TEMPLATE % resp_dict
         return resp_xml
@@ -118,7 +119,7 @@ class PKCS7Encoder():
             amount_to_pad = self.block_size
         # 获得补位所用的字符
         pad = chr(amount_to_pad)
-        return text + pad * amount_to_pad
+        return text + to_binary(pad * amount_to_pad)
 
     @staticmethod
     def decode(decrypted):
@@ -147,7 +148,7 @@ class Prpcrypt(object):
         @return: 加密得到的字符串
         """
         # 16位随机字符串添加到明文开头
-        text = self.get_random_str() + str(bytearray(struct.pack("I", socket.htonl(len(text))))) + text + appid
+        text = to_binary(self.get_random_str()) + struct.pack("I", socket.htonl(len(text))) + to_binary(text) + appid
         # 使用自定义的填充方式对明文进行补位填充
         pkcs7 = PKCS7Encoder()
         text = pkcs7.encode(text)
@@ -182,13 +183,13 @@ class Prpcrypt(object):
             content = plain_text[16:-pad]
             xml_len = socket.ntohl(struct.unpack("I", content[: 4])[0])
             xml_content = content[4: xml_len + 4]
-            from_appid = content[xml_len + 4:].decode("utf-8")
+            from_appid = content[xml_len + 4:]
         except Exception as e:
             print(e)
             return ierror.WXBizMsgCrypt_IllegalBuffer, None
         if from_appid != appid:
             return ierror.WXBizMsgCrypt_ValidateAppid_Error, None
-        return 0, xml_content
+        return 0, to_text(xml_content)
 
     @staticmethod
     def get_random_str():
@@ -207,13 +208,13 @@ class WXBizMsgCrypt(object):
     # @param sAppId: 企业号的AppId
     def __init__(self, sToken, sEncodingAESKey, sAppId):
         try:
-            self.key = base64.b64decode(sEncodingAESKey + "=")
+            self.key = base64.b64decode(to_binary(sEncodingAESKey) + to_binary("="))
             assert len(self.key) == 32
         except FormatException:
             throw_exception("[error]: EncodingAESKey unvalid !", FormatException)
         # return ierror.WXBizMsgCrypt_IllegalAesKey)
-        self.token = sToken
-        self.appid = sAppId
+        self.token = to_binary(sToken)
+        self.appid = to_binary(sAppId)
 
     def EncryptMsg(self, sReplyMsg, sNonce, timestamp=None):
         # 将公众号回复用户的消息加密打包
@@ -227,10 +228,10 @@ class WXBizMsgCrypt(object):
         if ret != 0:
             return ret, None
         if timestamp is None:
-            timestamp = str(int(time.time()))
+            timestamp = to_binary(str(int(time.time())))
         # 生成安全签名
         sha1 = SHA1()
-        ret, signature = sha1.getSHA1(self.token, timestamp, sNonce, encrypt)
+        ret, signature = sha1.getSHA1(self.token, timestamp, to_binary(sNonce), encrypt)
         if ret != 0:
             return ret, None
         xmlParse = XMLParse()
@@ -250,11 +251,11 @@ class WXBizMsgCrypt(object):
         if ret != 0:
             return ret, None
         sha1 = SHA1()
-        ret, signature = sha1.getSHA1(self.token, sTimeStamp, sNonce, encrypt)
+        ret, signature = sha1.getSHA1(self.token, to_binary(sTimeStamp), to_binary(sNonce), encrypt)
         if ret != 0:
             return ret, None
         if not signature == sMsgSignature:
             return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         ret, xml_content = pc.decrypt(encrypt, self.appid)
-        return ret, xml_content.decode()
+        return ret, xml_content
