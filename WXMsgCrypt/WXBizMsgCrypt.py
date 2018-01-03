@@ -17,7 +17,7 @@ from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
 import socket
 from WXMsgCrypt import ierror
-from WXMsgCrypt.cryptutil import to_text, to_binary
+from WXMsgCrypt.cryptutil import to_utf8_btyes, to_utf8_str
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案
@@ -48,10 +48,10 @@ class SHA1:
         @return: 安全签名
         """
         try:
-            sortlist = [token, timestamp, nonce, to_binary(encrypt)]
+            sortlist = [token, timestamp, nonce, encrypt]
             sortlist.sort()
             sha = hashlib.sha1()
-            sha.update(to_binary("").join(sortlist))
+            sha.update(to_utf8_btyes("".join(sortlist)))
             return ierror.WXBizMsgCrypt_OK, sha.hexdigest()
         except Exception as e:
             print(e)
@@ -93,10 +93,10 @@ class XMLParse:
         @return: 生成的xml字符串
         """
         resp_dict = {
-            'msg_encrypt': to_text(encrypt),
-            'msg_signaturet': to_text(signature),
-            'timestamp': to_text(timestamp),
-            'nonce': to_text(nonce),
+            'msg_encrypt': encrypt,
+            'msg_signaturet': signature,
+            'timestamp': timestamp,
+            'nonce': nonce,
         }
         resp_xml = self.AES_TEXT_RESPONSE_TEMPLATE % resp_dict
         return resp_xml
@@ -107,19 +107,20 @@ class PKCS7Encoder():
 
     block_size = 32
 
-    def encode(self, text):
+    def encode(self, text_bytes):
         """ 对需要加密的明文进行填充补位
-        @param text: 需要进行填充补位操作的明文
+        @param text_bytes: 需要进行填充补位操作的明文(bytes)
+        @param text_bytes: 需要进行填充补位操作的明文(bytes)
         @return: 补齐明文字符串
         """
-        text_length = len(text)
+        text_length = len(text_bytes)
         # 计算需要填充的位数
         amount_to_pad = self.block_size - (text_length % self.block_size)
         if amount_to_pad == 0:
             amount_to_pad = self.block_size
         # 获得补位所用的字符
-        pad = to_binary(chr(amount_to_pad))
-        return text + pad * amount_to_pad
+        pad = chr(amount_to_pad)
+        return text_bytes + to_utf8_btyes(pad * amount_to_pad)
 
     @staticmethod
     def decode(decrypted):
@@ -149,16 +150,18 @@ class Prpcrypt(object):
         :return: 加密得到的字符串
         """
         # 16位随机字符串添加到明文开头
-        text = to_binary(self.get_random_str()) + struct.pack("I", socket.htonl(len(text))) + to_binary(text) + appid
+        text_bytes = to_utf8_btyes(text)
+        text_bytes = to_utf8_btyes(self.get_random_str()) + struct.pack("I", socket.htonl(
+            len(text_bytes))) + text_bytes + to_utf8_btyes(appid)
         # 使用自定义的填充方式对明文进行补位填充
         pkcs7 = PKCS7Encoder()
-        text = pkcs7.encode(text)
+        text_bytes = pkcs7.encode(text_bytes)
         # 加密
         cryptor = AES.new(self.key, self.mode, self.key[:16])
         try:
-            ciphertext = cryptor.encrypt(text)
+            ciphertext = cryptor.encrypt(text_bytes)
             # 使用BASE64对加密后的字符串进行编码
-            return ierror.WXBizMsgCrypt_OK, base64.b64encode(ciphertext)
+            return ierror.WXBizMsgCrypt_OK, to_utf8_str(base64.b64encode(ciphertext))
         except Exception as e:
             print(e)
             return ierror.WXBizMsgCrypt_EncryptAES_Error, None
@@ -184,13 +187,13 @@ class Prpcrypt(object):
             content = plain_text[16:-pad]
             xml_len = socket.ntohl(struct.unpack("I", content[: 4])[0])
             xml_content = content[4: xml_len + 4]
-            from_appid = content[xml_len + 4:]
+            from_appid = to_utf8_str(content[xml_len + 4:])
         except Exception as e:
             print(e)
             return ierror.WXBizMsgCrypt_IllegalBuffer, None
         if from_appid != appid:
             return ierror.WXBizMsgCrypt_ValidateAppid_Error, None
-        return 0, to_text(xml_content)
+        return 0, xml_content
 
     @staticmethod
     def get_random_str():
@@ -209,13 +212,13 @@ class WXBizMsgCrypt(object):
     # @param sAppId: 企业号的AppId
     def __init__(self, sToken, sEncodingAESKey, sAppId):
         try:
-            self.key = base64.b64decode(to_binary(sEncodingAESKey) + to_binary("="))
+            self.key = base64.b64decode(sEncodingAESKey + "=")
             assert len(self.key) == 32
         except FormatException:
             throw_exception("[error]: EncodingAESKey unvalid !", FormatException)
         # return ierror.WXBizMsgCrypt_IllegalAesKey)
-        self.token = to_binary(sToken)
-        self.appid = to_binary(sAppId)
+        self.token = sToken
+        self.appid = sAppId
 
     def EncryptMsg(self, sReplyMsg, sNonce, timestamp=None):
         # 将公众号回复用户的消息加密打包
@@ -229,10 +232,10 @@ class WXBizMsgCrypt(object):
         if ret != 0:
             return ret, None
         if timestamp is None:
-            timestamp = to_binary(str(int(time.time())))
+            timestamp = str(int(time.time()))
         # 生成安全签名
         sha1 = SHA1()
-        ret, signature = sha1.getSHA1(self.token, timestamp, to_binary(sNonce), encrypt)
+        ret, signature = sha1.getSHA1(self.token, timestamp, sNonce, encrypt)
         if ret != 0:
             return ret, None
         xmlParse = XMLParse()
@@ -252,11 +255,11 @@ class WXBizMsgCrypt(object):
         if ret != 0:
             return ret, None
         sha1 = SHA1()
-        ret, signature = sha1.getSHA1(self.token, to_binary(sTimeStamp), to_binary(sNonce), encrypt)
+        ret, signature = sha1.getSHA1(self.token, sTimeStamp, sNonce, encrypt)
         if ret != 0:
             return ret, None
         if not signature == sMsgSignature:
             return ierror.WXBizMsgCrypt_ValidateSignature_Error, None
         pc = Prpcrypt(self.key)
         ret, xml_content = pc.decrypt(encrypt, self.appid)
-        return ret, xml_content
+        return ret, to_utf8_str(xml_content)
