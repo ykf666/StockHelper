@@ -9,6 +9,7 @@ from urllib import parse
 from bottleplugins.canister import Canister
 from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
+from utils import stockutil
 
 app = Bottle()
 bottle_config = app.config.load_config("config/app.conf")
@@ -38,8 +39,10 @@ def wx():
     ret, decrypt_xml = decrypt(from_xml, msg_signature, timestamp, nonce)
     app.log.info("Decrypt data: %s, %s" % (ret, decrypt_xml))
 
+    # 获取当日大盘概况
+    s_content = stockutil.summary_stock()
     s_xml = template('send_msg', touser=extract(decrypt_xml, "FromUserName"), fromuser=wx_account,
-                     createtime=int(time.time()), content="二哈")
+                     createtime=int(time.time()), content=s_content)
     app.log.info("Response xml: %s" % s_xml)
     # 加密返回消息字符串
     ret, to_xml = encrypt(s_xml, nonce)
