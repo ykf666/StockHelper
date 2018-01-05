@@ -16,7 +16,7 @@ def summary_stock():
     summarystr = ''
     for key in result.keys():
         item = result[key]
-        print(item)
+
         name = item['name']
         close_yesterday = item['close']
         now = item['now']
@@ -24,9 +24,9 @@ def summary_stock():
         ratio = '+' if jg >= 0 else ''
         ratio = ratio + str('%.2f' % (jg*100.00)) + '%'
         if summarystr:
-            summarystr = summarystr + '\n' + name + ': ' + ratio + ', ' + str(now)
+            summarystr = summarystr + '\n' + name + ': ' + ratio + ', ' + str(float('%.2f' % now))
         else:
-            summarystr = name + ': ' + ratio + ', ' + str(now)
+            summarystr = name + ': ' + ratio + ', ' + str(float('%.2f' % now))
     return summarystr
 
 
