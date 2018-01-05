@@ -31,12 +31,12 @@ def wx():
     timestamp = qs["timestamp"][0]
     nonce = qs["nonce"][0]
     msg_signature = qs["msg_signature"][0]
-    app.log.info("Signature: %s" % signature)
+    app.log.info("Request signature: %s" % signature)
     # 读取post数据
     from_xml = request.body.read().decode()
-    app.log.info("POST data: %s" % from_xml)
     # 接收消息解密
     ret, decrypt_xml = decrypt(from_xml, msg_signature, timestamp, nonce)
+    app.log.info("Request xml: %s" % decrypt_xml)
 
     s_content = ""  # 回复的消息内容
     msgtype = extract(decrypt_xml, "MsgType")
@@ -57,7 +57,6 @@ def wx():
     app.log.info("Response xml: %s" % s_xml)
     # 加密返回消息字符串
     ret, to_xml = encrypt(s_xml, nonce)
-    app.log.info("Response encrypt xml: %s" % to_xml)
     return to_xml
 
 
