@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from bottle import Bottle, run, request, template, response
 from cron import taskjobs
 from urllib import parse
-from bottleplugins.canister import Canister
+from libs.bottleplugins.canister import Canister
 from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
 from utils import stockutil
@@ -37,12 +37,23 @@ def wx():
     app.log.info("POST data: %s" % from_xml)
     # 接收消息解密
     ret, decrypt_xml = decrypt(from_xml, msg_signature, timestamp, nonce)
-    app.log.info("Decrypt data: %s, %s" % (ret, decrypt_xml))
 
-    # 获取当日大盘概况
-    s_content = stockutil.summary_stock()
-    s_xml = template('send_msg', touser=extract(decrypt_xml, "FromUserName"), fromuser=wx_account,
-                     createtime=int(time.time()), content=s_content)
+    s_content = ""  # 回复的消息内容
+    msgtype = extract(decrypt_xml, "MsgType")
+    fromuser = extract(decrypt_xml, "FromUserName")
+    if msgtype == "text":
+        # 获取当日大盘概况
+        s_content = stockutil.summary_stock()
+    elif msgtype == "event":
+        eventtype = extract(decrypt_xml, "Event")
+        if eventtype == "subscribe":
+            s_content = "欢迎您，感谢订阅股小秘，回复任意文本消息，获取股市行情。"
+        else:
+            s_content = "success"
+    else:
+        s_content = "开发中，敬请期待！"
+
+    s_xml = template('send_msg', touser=fromuser, fromuser=wx_account, createtime=int(time.time()), content=s_content)
     app.log.info("Response xml: %s" % s_xml)
     # 加密返回消息字符串
     ret, to_xml = encrypt(s_xml, nonce)

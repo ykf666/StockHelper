@@ -3,7 +3,7 @@
 
 
 import json
-from easyquotation import use
+from libs.easyquotation import use
 
 # 实例化新浪免费行情接口
 sina_quotation = use("sina")
@@ -16,17 +16,17 @@ def summary_stock():
     summarystr = ''
     for key in result.keys():
         item = result[key]
+        print(item)
         name = item['name']
-        openvalue = item['open']
+        close_yesterday = item['close']
         now = item['now']
-        jg = float('%.4f' % ((now - openvalue) / openvalue))
-        if jg >= 0:
-            ratio = '+' + str(jg*100.0) + '%'
-
+        jg = float('%.4f' % ((now - close_yesterday) / close_yesterday))
+        ratio = '+' if jg >= 0 else ''
+        ratio = ratio + str('%.2f' % (jg*100.00)) + '%'
         if summarystr:
-            summarystr = summarystr + '\n' + name + ': ' + ratio + ', ' + str(openvalue) + ', ' + str(now)
+            summarystr = summarystr + '\n' + name + ': ' + ratio + ', ' + str(now)
         else:
-            summarystr = name + ': ' + ratio + ', ' + str(openvalue) + ', ' + str(now)
+            summarystr = name + ': ' + ratio + ', ' + str(now)
     return summarystr
 
 

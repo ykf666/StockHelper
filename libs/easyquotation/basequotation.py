@@ -4,7 +4,7 @@ import json
 import warnings
 
 import aiohttp
-import easyutils
+from libs import easyutils
 import yarl
 
 from . import helpers

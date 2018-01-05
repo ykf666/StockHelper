@@ -16,8 +16,8 @@ import struct
 from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
 import socket
-from WXMsgCrypt import ierror
-from WXMsgCrypt.cryptutil import to_utf8_btyes, to_utf8_str
+from libs.WXMsgCrypt import ierror
+from libs.WXMsgCrypt.cryptutil import to_utf8_btyes, to_utf8_str
 
 """
 关于Crypto.Cipher模块，ImportError: No module named 'Crypto'解决方案

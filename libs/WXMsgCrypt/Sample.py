@@ -6,7 +6,7 @@
 # File Name: demo.py
 # Description: WXBizMsgCrypt 使用demo文件
 #########################################################################
-from WXMsgCrypt import WXBizMsgCrypt
+from libs.WXMsgCrypt import WXBizMsgCrypt
 
 if __name__ == "__main__":
     """ 

@@ -4,7 +4,7 @@ import random
 import string
 import hashlib
 from requests import get
-from WXMsgCrypt import WXBizMsgCrypt
+from libs.WXMsgCrypt import WXBizMsgCrypt
 import xml.etree.cElementTree as ET
 
 wx_account = "gh_fd46ac560288"
