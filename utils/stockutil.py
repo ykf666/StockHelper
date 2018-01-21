@@ -2,7 +2,6 @@
 # coding=utf-8
 
 
-import json
 from libs.easyquotation import use
 
 # 实例化新浪免费行情接口

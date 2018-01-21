@@ -9,13 +9,23 @@ import json
 datefmt = '%Y-%m-%d'
 pool = urllib3.PoolManager()
 base_url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz'
+today = datetime.datetime.now()
+
+fund_dict = {}
+try:
+    with open('fundlist-' + today.strftime(datefmt) + '.txt', 'r', encoding='utf-8') as f:
+        fund_dict = eval(f.read())
+except IOError:
+    print(IOError.strerror)
+else:
+    f.close()
 
 
-def get_fund_price(code):
-    to_date = datetime.datetime.now()
-    from_date = to_date + datetime.timedelta(days=-10)
-    r_url = base_url + '&code=' + code + '&page=1&per=20&sdate=' + from_date.strftime(datefmt) \
-            + '&edate=' + to_date.strftime(datefmt)
+# 查询基金详情
+def get_fund_price(fund_code):
+    from_date = datetime.datetime.now() + datetime.timedelta(days=-10)
+    r_url = base_url + '&code=' + fund_code + '&page=1&per=20&sdate=' + from_date.strftime(datefmt) \
+            + '&edate=' + today.strftime(datefmt)
     response = pool.request('GET', r_url)
     resp_data = response.data.decode('utf-8')
     print(resp_data)
@@ -45,3 +55,4 @@ if __name__ == "__main__":
             current_price = float(res[1])
             ratio = float('%.4f' % ((current_price - cost_price) / cost_price))
             print(ratio)
+            print(fund_dict[code])
