@@ -11,15 +11,6 @@ pool = urllib3.PoolManager()
 base_url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz'
 today = datetime.datetime.now()
 
-fund_dict = {}
-try:
-    with open('fund_codes.conf', 'r', encoding='utf-8') as f:
-        fund_dict = eval(f.read())
-except IOError:
-    print(IOError.strerror)
-else:
-    f.close()
-
 
 # 查询基金详情
 def get_fund_price(fund_code):
@@ -42,19 +33,21 @@ def get_fund_price(fund_code):
 
 # 根据openid获取基金收益详情
 def fund_detail_openid(open_id, file_path):
+    with open('fund_codes.conf', 'r', encoding='utf-8') as f:
+        fund_dict = eval(f.read())
     with open(file_path, encoding='utf-8') as f:
         conf = json.load(f)
     result = ''
     if open_id in conf:
         for u_conf in conf[open_id]:
-            code = u_conf['code']
+            fcode = u_conf['code']
             cost_price = u_conf['cost_price']
             count = u_conf['count']
-            res = get_fund_price(code)
+            res = get_fund_price(fcode)
             lastest_date = res[0]
             current_price = float(res[1])
 
-            fund_name = fund_dict[code]
+            fund_name = fund_dict[fcode]
             # 单位净值差额(当前价格-成本价)
             difference = current_price - cost_price
             jg = float('%.4f' % (difference / cost_price))
