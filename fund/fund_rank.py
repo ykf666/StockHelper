@@ -13,7 +13,7 @@ today = datetime.datetime.now()
 
 fund_dict = {}
 try:
-    with open('fundlist-' + today.strftime(datefmt) + '.txt', 'r', encoding='utf-8') as f:
+    with open('fund_codes.conf', 'r', encoding='utf-8') as f:
         fund_dict = eval(f.read())
 except IOError:
     print(IOError.strerror)
@@ -41,8 +41,8 @@ def get_fund_price(fund_code):
 
 
 # 根据openid获取基金收益详情
-def fund_detail_openid(open_id):
-    with open("../config/fund.json", encoding='utf-8') as f:
+def fund_detail_openid(open_id, file_path):
+    with open(file_path, encoding='utf-8') as f:
         conf = json.load(f)
     result = ''
     if open_id in conf:
@@ -51,6 +51,7 @@ def fund_detail_openid(open_id):
             cost_price = u_conf['cost_price']
             count = u_conf['count']
             res = get_fund_price(code)
+            print(res)
             current_price = float(res[1])
 
             fund_name = fund_dict[code]
@@ -67,3 +68,7 @@ def fund_detail_openid(open_id):
         return result
     else:
         return "您目前没有配置基金购买情况，无法获取收益详情！"
+
+
+if __name__ == "__main__":
+    print(fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc"))

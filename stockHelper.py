@@ -10,7 +10,7 @@ from libs.bottleplugins.canister import Canister
 from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
 from utils import stockutil
-from fund import fund_rank
+from fund import fund_rank, fund_helpers
 
 
 app = Bottle()
@@ -46,7 +46,7 @@ def wx():
         req_content = extract(decrypt_xml, "Content")
         if req_content == 'fund':
             # 获取基金收益
-            s_content = fund_rank.fund_detail_openid(fromuser)
+            s_content = fund_rank.fund_detail_openid(fromuser, "fund/fund_codes.conf")
         elif req_content == 'stock':
             # 获取股票收益
             s_content = "=="
@@ -70,6 +70,8 @@ def wx():
 
 
 if __name__ == '__main__':
+    # 启动时创建基金codes文件
+    fund_helpers.get_fund_codes("fund/fund_codes.conf")
     with open("config/jobs.json", 'r') as f:
         conf = json.load(f)
     if "jobs" in conf:
