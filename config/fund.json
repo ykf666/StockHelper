@@ -12,5 +12,31 @@
       "cost_price": 1.5844,
       "count": 6311.54
     }
+  ],
+  "oBBGPwDi5fiAtz8KRaSBYngBlKS8": [
+    {
+      "code": "110026",
+      "name": "易方达创业板ETF联接A",
+      "cost_price": 1.8385,
+      "count": 54361.71
+    },
+    {
+      "code": "160119",
+      "name": "南方中证500ETF联接A",
+      "cost_price": 1.5337,
+      "count": 17278.76
+    },
+    {
+      "code": "001975",
+      "name": "景顺长城环保优势股票",
+      "cost_price": 1.5603,
+      "count": 1922.66
+    },
+    {
+      "code": "233009",
+      "name": "大摩华鑫多因子精选策略混合",
+      "cost_price": 1.3761,
+      "count": 1453.42
+    }
   ]
 }
