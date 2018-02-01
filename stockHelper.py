@@ -46,7 +46,7 @@ def wx():
         req_content = extract(decrypt_xml, "Content")
         if req_content == 'fund':
             # 获取基金收益
-            s_content = fund_rank.fund_detail_openid(fromuser, "fund/fund_codes.conf")
+            s_content = fund_rank.fund_detail_openid(fromuser, "config/fund.json")
         elif req_content == 'stock':
             # 获取股票收益
             s_content = "=="

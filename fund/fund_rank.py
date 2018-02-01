@@ -51,7 +51,7 @@ def fund_detail_openid(open_id, file_path):
             cost_price = u_conf['cost_price']
             count = u_conf['count']
             res = get_fund_price(code)
-            print(res)
+            lastest_date = res[0]
             current_price = float(res[1])
 
             fund_name = fund_dict[code]
@@ -62,13 +62,13 @@ def fund_detail_openid(open_id, file_path):
             ratio = ratio + str('%.2f' % (jg * 100.00)) + '%'
             cysy = float('%.2f' % (count * difference))
             if result:
-                result = result + '\n' + fund_name + ': ' + ratio + ', ' + str(cysy)
+                result = result + '\n' + "[" + lastest_date + "]" + fund_name + ': ' + ratio + ', ' + str(cysy)
             else:
-                result = fund_name + ': ' + ratio + ', ' + str(cysy)
+                result = "[" + lastest_date + "]" + fund_name + ': ' + ratio + ', ' + str(cysy)
         return result
     else:
         return "您目前没有配置基金购买情况，无法获取收益详情！"
 
 
 if __name__ == "__main__":
-    print(fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc"))
+    print(fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc", "../config/fund.json"))
