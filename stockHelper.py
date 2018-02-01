@@ -10,6 +10,8 @@ from libs.bottleplugins.canister import Canister
 from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
 from utils import stockutil
+from fund import fund_rank
+
 
 app = Bottle()
 bottle_config = app.config.load_config("config/app.conf")
@@ -38,12 +40,19 @@ def wx():
     ret, decrypt_xml = decrypt(from_xml, msg_signature, timestamp, nonce)
     app.log.info("Request xml: %s" % decrypt_xml)
 
-    s_content = ""  # 回复的消息内容
     msgtype = extract(decrypt_xml, "MsgType")
     fromuser = extract(decrypt_xml, "FromUserName")
     if msgtype == "text":
-        # 获取当日大盘概况
-        s_content = stockutil.summary_stock()
+        req_content = extract(decrypt_xml, "Content")
+        if req_content == 'fund':
+            # 获取基金收益
+            s_content = fund_rank.fund_detail_openid(fromuser)
+        elif req_content == 'stock':
+            # 获取股票收益
+            s_content = "=="
+        else:
+            # 获取当日大盘概况
+            s_content = stockutil.summary_stock()
     elif msgtype == "event":
         eventtype = extract(decrypt_xml, "Event")
         if eventtype == "subscribe":

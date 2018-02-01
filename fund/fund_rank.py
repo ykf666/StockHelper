@@ -28,7 +28,6 @@ def get_fund_price(fund_code):
             + '&edate=' + today.strftime(datefmt)
     response = pool.request('GET', r_url)
     resp_data = response.data.decode('utf-8')
-    print(resp_data)
 
     tr_re = re.compile(r'<tr>(.*?)</tr>')
     item_re = re.compile(r'''<td>(\d{4}-\d{2}-\d{2})</td><td.*?>(.*?)</td><td.*?>(.*?)</td><td.*?>(.*?)</td><td.*?>
@@ -41,18 +40,30 @@ def get_fund_price(fund_code):
     return entry
 
 
-if __name__ == "__main__":
-    with open("../config/fund.json", 'r') as f:
+# 根据openid获取基金收益详情
+def fund_detail_openid(open_id):
+    with open("../config/fund.json", encoding='utf-8') as f:
         conf = json.load(f)
-    if 'oBBGPwGoZ4mM0u4oP_jkXKvdTtYc' in conf:
-        for u_conf in conf['oBBGPwGoZ4mM0u4oP_jkXKvdTtYc']:
+    result = ''
+    if open_id in conf:
+        for u_conf in conf[open_id]:
             code = u_conf['code']
             cost_price = u_conf['cost_price']
             count = u_conf['count']
-            name = u_conf['name']
             res = get_fund_price(code)
-            print(res)
             current_price = float(res[1])
-            ratio = float('%.4f' % ((current_price - cost_price) / cost_price))
-            print(ratio)
-            print(fund_dict[code])
+
+            fund_name = fund_dict[code]
+            # 单位净值差额(当前价格-成本价)
+            difference = current_price - cost_price
+            jg = float('%.4f' % (difference / cost_price))
+            ratio = '+' if jg >= 0 else ''
+            ratio = ratio + str('%.2f' % (jg * 100.00)) + '%'
+            cysy = float('%.2f' % (count * difference))
+            if result:
+                result = result + '\n' + fund_name + ': ' + ratio + ', ' + str(cysy)
+            else:
+                result = fund_name + ': ' + ratio + ', ' + str(cysy)
+        return result
+    else:
+        return "您目前没有配置基金购买情况，无法获取收益详情！"

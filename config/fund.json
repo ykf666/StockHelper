@@ -3,9 +3,14 @@
     {
       "code": "110026",
       "name": "易方达创业板ETF联接A",
-      "cost_price": 1.8647,
-      "count": 32176.02,
-      "purchase": "60000"
+      "cost_price": 1.8508,
+      "count": 37821.20
+    },
+    {
+      "code": "160119",
+      "name": "南方中证500ETF联接A",
+      "cost_price": 1.5844,
+      "count": 6311.54
     }
   ]
 }
