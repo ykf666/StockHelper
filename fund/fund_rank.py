@@ -32,8 +32,8 @@ def get_fund_price(fund_code):
 
 
 # 根据openid获取基金收益详情
-def fund_detail_openid(open_id, file_path):
-    with open('fund_codes.conf', 'r', encoding='utf-8') as f:
+def fund_detail_openid(open_id, file_path, fund_codes_file):
+    with open(fund_codes_file, 'r', encoding='utf-8') as f:
         fund_dict = eval(f.read())
     with open(file_path, encoding='utf-8') as f:
         conf = json.load(f)
@@ -64,4 +64,4 @@ def fund_detail_openid(open_id, file_path):
 
 
 if __name__ == "__main__":
-    print(fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc", "../config/fund.json"))
+    print(fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc", "../config/fund.json", "fund_codes.conf"))
