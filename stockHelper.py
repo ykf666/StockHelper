@@ -1,27 +1,33 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import json
-from apscheduler.schedulers.background import BackgroundScheduler
 from bottle import Bottle, run, request, template, response
-from cron import taskjobs
 from urllib import parse
 from libs.bottleplugins.canister import Canister
+from libs.bottleplugins.boot import Boot
 from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
-from utils import stockutil
-from fund import fund_rank, fund_helpers
+from stock.stock_api import summary_stock
+from fund.fund_api import fund_detail_openid
 
 
 app = Bottle()
 bottle_config = app.config.load_config("config/app.conf")
 app.install(Canister())
+app.install(Boot())
 
 
-@app.route('/')
+@app.route('/', method="GET")
 def index():
-    # app.log.info("access web root index...")
-    return "Welcome to python web!"
+    print(request.params)
+    # 读取url参数
+    qs = parse.parse_qs(request.query_string)
+    req_str = qs["test"][0]
+    if req_str == 'fund':
+        s_content = fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc")
+    else:
+        s_content = summary_stock()
+    return s_content
 
 
 @app.route('/wx', method="POST")
@@ -46,13 +52,13 @@ def wx():
         req_content = extract(decrypt_xml, "Content")
         if req_content == 'fund':
             # 获取基金收益
-            s_content = fund_rank.fund_detail_openid(fromuser, "config/fund.json", "fund/fund_codes.conf")
+            s_content = fund_detail_openid(fromuser)
         elif req_content == 'stock':
             # 获取股票收益
             s_content = "=="
         else:
             # 获取当日大盘概况
-            s_content = stockutil.summary_stock()
+            s_content = summary_stock()
     elif msgtype == "event":
         eventtype = extract(decrypt_xml, "Event")
         if eventtype == "subscribe":
@@ -70,19 +76,4 @@ def wx():
 
 
 if __name__ == '__main__':
-    # 启动时创建基金codes文件
-    fund_helpers.get_fund_codes("fund/fund_codes.conf")
-    with open("config/jobs.json", 'r') as f:
-        conf = json.load(f)
-    if "jobs" in conf:
-        sched_jobs = conf["jobs"]
-    sched = BackgroundScheduler()
-    for job in sched_jobs:
-        if job.pop("enable").lower() == "true":
-            job["func"] = getattr(taskjobs, job["func"])
-            sched.add_job(**job)
-    # 启动定时任务
-    add_jobs = sched.get_jobs()
-    if add_jobs.__len__() > 0:
-        sched.start()
     run(app, **bottle_config)

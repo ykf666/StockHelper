@@ -10,4 +10,4 @@ def print_job():
 
 
 def creat_fund_list_file():
-    get_fund_codes("fund/fund_codes.conf")
+    get_fund_codes()

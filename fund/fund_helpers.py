@@ -2,14 +2,16 @@
 # coding=utf-8
 
 import urllib3
+import os
 import re
-import datetime
 
+
+FUND_CODE_PATH = 'fund_codes.conf'
 pool = urllib3.PoolManager()
 
 
 # 获取基金列表
-def get_fund_codes(file_path):
+def get_fund_codes():
     result = ''
     data_re = re.compile(r'=.\[(.*?)\];$')
     item_re = re.compile(r'\[(.*?)\]')
@@ -25,9 +27,13 @@ def get_fund_codes(file_path):
                 else:
                     result = result + "," + item_list[0] + ":" + item_list[2]
     result = "{" + result + "}"
-    with open(file_path, 'wb') as f:
-        f.write(result.encode('utf-8'))
+    with open(fund_code_path(), 'wb') as f:
+        f.write(result.encode("utf-8"))
+
+
+def fund_code_path():
+    return os.path.join(os.path.dirname(__file__), FUND_CODE_PATH)
 
 
 if __name__ == "__main__":
-    get_fund_codes("fund_codes.conf")
+    get_fund_codes()
