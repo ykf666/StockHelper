@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from bottle import Bottle, run, request, template, response
+from bottle import Bottle, run, request, template, response, static_file
 from urllib import parse
 from libs.bottleplugins.canister import Canister
 from libs.bottleplugins.boot import Boot
@@ -19,7 +19,6 @@ app.install(Boot())
 
 @app.route('/', method="GET")
 def index():
-    print(request.params)
     # 读取url参数
     qs = parse.parse_qs(request.query_string)
     req_str = qs["test"][0]
@@ -73,6 +72,19 @@ def wx():
     # 加密返回消息字符串
     ret, to_xml = encrypt(s_xml, nonce)
     return to_xml
+
+
+@app.route('/html/<path>')
+def html(path):
+    return static_file(path, root='views')
+
+
+@app.route('/api/fund/setup', method="POST")
+def index():
+    # 读取post数据
+    req_data = request.body.read().decode()
+    app.log.info(req_data)
+    return '{result:success}'
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ import hashlib
 from requests import get
 from libs.WXMsgCrypt import WXBizMsgCrypt
 import xml.etree.cElementTree as ET
+import json
 
 wx_account = "gh_fd46ac560288"
 wx_token = "RZmUQDAuNjf3y6i2kL0IX8WBMOpPraEY"
@@ -17,7 +18,9 @@ process = WXBizMsgCrypt.WXBizMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
 def get_access_token():
     resp = get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&"
                "appid=wx22b402d2c52b8ac1&secret=35f4c38e139897fd17a668eb3144de44")
-    return resp.json()
+    t = resp.text
+    d = json.loads(t)
+    return d['access_token']
 
 
 def decrypt(from_xml, msg_sign, timestamp, nonce):

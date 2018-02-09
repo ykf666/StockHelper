@@ -73,5 +73,15 @@ def get_fund_price(fund_code):
     return entry
 
 
+def set_fund_info(fund_code, cost_price, fund_count):
+    with open(str(current_dir / 'fund_codes.conf'), 'r', encoding='utf-8') as f:
+        fund_dict = eval(f.read())
+    fund_name = fund_dict[fund_code]
+    if fund_name == '':
+        return "fail"
+    data = '{name}'
+
+
+
 if __name__ == "__main__":
     print(fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc"))

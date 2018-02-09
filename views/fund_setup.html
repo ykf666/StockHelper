@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>Title</title>
+    <link rel="stylesheet" href="./weui.css"/>
+    <style type="text/css">
+        body{background-color: #efeff4;}
+
+    </style>
+    <script src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div class="weui-cells weui-cells_form">
+    <form>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">基金Code：</label></div>
+            <div class="weui-cell__bd">
+                <input name="code" class="weui-input" type="number" pattern="[0-9]*">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">持仓成本价：</label></div>
+            <div class="weui-cell__bd">
+                <input name="cost_price" class="weui-input" type="number" pattern="[0-9]*">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">持有份额：</label></div>
+            <div class="weui-cell__bd">
+                <input name="count" class="weui-input" type="number" pattern="[0-9]*">
+            </div>
+        </div>
+        <a class="weui-btn weui-btn_primary" id="button">提交</a>
+    </form>
+</div>
+<div id="result_div" style="display: none;">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+        <div class="weui-dialog__hd"><strong class="weui-dialog__title">结果</strong></div>
+        <div id="result_msg" class="weui-dialog__bd"></div>
+        <div class="weui-dialog__ft">
+            <a id="result_confirm" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+      $('#button').on('click', function(){
+        var data = $('form').serialize();
+        var content = JSON.stringify(data).replace(/"/gi, '').replace(/&/gi, '<br>');
+        $.post('http://localhost/api/fund/setup', data,
+            function(data, status){
+                $('#result_msg').text(status);
+                $('#result_div').show();
+        });
+      });
+
+      $('#result_confirm').on('click', function(){
+        location.reload();
+      });
+    });
+
+    document.body.setAttribute('ontouchstart', '');
+    // android
+    //document.title = "WeUI表单序列化示例";
+
+    // iOS
+    if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+        callback();
+    } else {
+        if (document.addEventListener) {
+            document.addEventListener("WeixinJSBridgeReady", callback, false);
+        } else if (document.attachEvent) {
+            document.attachEvent("WeixinJSBridgeReady", callback);
+            document.attachEvent("onWeixinJSBridgeReady", callback);
+        }
+    }
+
+    function callback(){
+      WeixinJSBridge.invoke('setPageTitle', {title: '测试测试测试'}, function(res){
+        $.weui.alert(res.err_msg);
+      });
+    }
+
+</script>
+</body>
+</html>
