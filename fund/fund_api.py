@@ -9,7 +9,6 @@ import json
 from pathlib import Path
 from utils.logutil import getlogger
 
-
 base_url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz'
 datefmt = '%Y-%m-%d'
 today = datetime.datetime.now()
@@ -44,11 +43,14 @@ def fund_detail_openid(open_id):
         jg = float('%.4f' % (difference / cost_price))
         ratio = '+' if jg >= 0 else ''
         ratio = ratio + str('%.2f' % (jg * 100.00)) + '%'
+        # 持有收益
         cysy = float('%.2f' % (count * difference))
+        cysy_str = '+' if cysy >= 0 else ''
+        cysy_str = cysy_str + str('%.2f' % cysy)
         if result:
-            result = result + '\n' + "[" + lastest_date + "]" + fund_name + ': ' + ratio + ', ' + str(cysy)
+            result = result + '\n' + "[" + lastest_date + "]" + fund_name + ': ' + ratio + ', ' + cysy_str
         else:
-            result = "[" + lastest_date + "]" + fund_name + ': ' + ratio + ', ' + str(cysy)
+            result = "[" + lastest_date + "]" + fund_name + ': ' + ratio + ', ' + cysy_str
     return result
     # else:
     #     return "您目前没有配置基金购买情况，无法获取收益详情！"
@@ -80,7 +82,6 @@ def set_fund_info(fund_code, cost_price, fund_count):
     if fund_name == '':
         return "fail"
     data = '{name}'
-
 
 
 if __name__ == "__main__":
