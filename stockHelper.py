@@ -7,8 +7,9 @@ from libs.bottleplugins.canister import Canister
 from libs.bottleplugins.boot import Boot
 from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
-from stock.stock_api import summary_stock
+from stock.stock_api import summary_stock, detail_stock
 from fund.fund_api import fund_detail_openid
+import re
 
 
 app = Bottle()
@@ -24,6 +25,8 @@ def index():
     req_str = qs["test"][0]
     if req_str == 'fund':
         s_content = fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc")
+    elif req_str == 'stock':
+        s_content = detail_stock('600903')
     else:
         s_content = summary_stock()
     return s_content
@@ -52,9 +55,9 @@ def wx():
         if req_content == 'fund':
             # 获取基金收益
             s_content = fund_detail_openid(fromuser)
-        elif req_content == 'stock':
-            # 获取股票收益
-            s_content = "=="
+        elif re.match('[0-9]{6}', req_content):
+            # 根据股票代码查询个股详情
+            s_content = detail_stock(req_content)
         else:
             # 获取当日大盘概况
             s_content = summary_stock()
