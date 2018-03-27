@@ -11,7 +11,6 @@ from stock.stock_api import summary_stock, detail_stock
 from fund.fund_api import fund_detail_openid
 import re
 
-
 app = Bottle()
 bottle_config = app.config.load_config("config/app.conf")
 app.install(Canister())
@@ -52,10 +51,7 @@ def wx():
     fromuser = extract(decrypt_xml, "FromUserName")
     if msgtype == "text":
         req_content = extract(decrypt_xml, "Content")
-        if req_content == 'help':
-            # 帮助信息
-            s_content = '<a href ="http://65.49.220.169/html/fund_setup.html">基金持有设置</a>'
-        elif req_content == 'fund':
+        if req_content == 'fund':
             # 获取基金收益
             s_content = fund_detail_openid(fromuser)
         elif re.match('[0-9]{6}', req_content):
@@ -73,7 +69,11 @@ def wx():
     else:
         s_content = "开发中，敬请期待！"
 
-    s_xml = template('send_msg', touser=fromuser, fromuser=wx_account, createtime=int(time.time()), content=s_content)
+    if req_content == 'help':
+        s_xml = template('send_news', touser=fromuser, fromuser=wx_account, createtime=int(time.time()))
+    else:
+        s_xml = template('send_msg', touser=fromuser, fromuser=wx_account, createtime=int(time.time()),
+                         content=s_content)
     app.log.info("Response xml: %s" % s_xml)
     # 加密返回消息字符串
     ret, to_xml = encrypt(s_xml, nonce)
