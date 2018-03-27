@@ -52,7 +52,10 @@ def wx():
     fromuser = extract(decrypt_xml, "FromUserName")
     if msgtype == "text":
         req_content = extract(decrypt_xml, "Content")
-        if req_content == 'fund':
+        if req_content == 'help':
+            # 帮助信息
+            s_content = '<a href ="http://65.49.220.169/html/fund_setup.html">基金持有设置</a>'
+        elif req_content == 'fund':
             # 获取基金收益
             s_content = fund_detail_openid(fromuser)
         elif re.match('[0-9]{6}', req_content):
@@ -64,7 +67,7 @@ def wx():
     elif msgtype == "event":
         eventtype = extract(decrypt_xml, "Event")
         if eventtype == "subscribe":
-            s_content = "欢迎您，感谢订阅股小秘，回复任意文本消息，获取股市行情。"
+            s_content = "欢迎您，感谢订阅股小秘，回复任意文本消息，获取股市行情。如需帮助，请回复'help'指令。"
         else:
             s_content = "success"
     else:
