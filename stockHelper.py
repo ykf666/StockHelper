@@ -8,7 +8,6 @@ from libs.bottleplugins.boot import Boot
 from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
 from stock.stock_api import summary_stock, detail_stock
-from fund.fund_api import fund_detail_openid
 import re
 
 app = Bottle()
@@ -22,9 +21,7 @@ def index():
     # 读取url参数
     qs = parse.parse_qs(request.query_string)
     req_str = qs["test"][0]
-    if req_str == 'fund':
-        s_content = fund_detail_openid("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc")
-    elif req_str == 'stock':
+    if req_str == 'stock':
         s_content = detail_stock('600903')
     else:
         s_content = summary_stock()
@@ -51,10 +48,7 @@ def wx():
     fromuser = extract(decrypt_xml, "FromUserName")
     if msgtype == "text":
         req_content = extract(decrypt_xml, "Content")
-        if req_content == 'fund':
-            # 获取基金收益
-            s_content = fund_detail_openid(fromuser)
-        elif re.match('[0-9]{6}', req_content):
+        if re.match('[0-9]{6}', req_content):
             # 根据股票代码查询个股详情
             s_content = detail_stock(req_content)
         else:

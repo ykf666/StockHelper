@@ -8,10 +8,11 @@ sina_quotation = use("sina")
 
 
 def summary_stock():
-    # 上证指数，深证成指，创业板指
-    acodes = ('sh000001', 'sz399001', 'sz399006')
+    # 上证指数，深证成指，创业板指，老板电器，福耀玻璃
+    acodes = ('sh000001', 'sz399001', 'sz399006', '002508', '600660')
     result = sina_quotation.stocks(list(acodes))
     summarystr = ''
+    line = 0;
     for key in result.keys():
         item = result[key]
 
@@ -20,11 +21,14 @@ def summary_stock():
         now = item['now']
         jg = float('%.4f' % ((now - close_yesterday) / close_yesterday))
         ratio = '+' if jg >= 0 else ''
-        ratio = ratio + str('%.2f' % (jg*100.00)) + '%'
+        ratio = ratio + str('%.2f' % (jg * 100.00)) + '%'
         if summarystr:
             summarystr = summarystr + '\n' + name + ': ' + ratio + ', ' + str(float('%.2f' % now))
         else:
             summarystr = name + ': ' + ratio + ', ' + str(float('%.2f' % now))
+        if line == 2:
+            summarystr = summarystr + "\n===================="
+        line = line + 1
     return summarystr
 
 
@@ -38,7 +42,7 @@ def detail_stock(stock_code):
     now = item['now']
     jg = float('%.4f' % ((now - close_yesterday) / close_yesterday))
     ratio = '+' if jg >= 0 else ''
-    ratio = ratio + str('%.2f' % (jg*100.00)) + '%'
+    ratio = ratio + str('%.2f' % (jg * 100.00)) + '%'
     if summarystr:
         summarystr = summarystr + '\n' + name + ': ' + ratio + ', ' + str(float('%.2f' % now))
     else:
@@ -47,4 +51,4 @@ def detail_stock(stock_code):
 
 
 if __name__ == "__main__":
-    print(detail_stock('600903'))
+    print(summary_stock())
