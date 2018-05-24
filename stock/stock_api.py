@@ -12,7 +12,7 @@ def summary_stock():
     acodes = ('sh000001', 'sz399001', 'sz399006', '002508', '600660')
     result = sina_quotation.stocks(list(acodes))
     summarystr = ''
-    line = 0;
+    line = 0
     for key in result.keys():
         item = result[key]
 
