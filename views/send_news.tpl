@@ -6,10 +6,10 @@
 <ArticleCount>1</ArticleCount>
 <Articles>
 <item>
-<Title><![CDATA[基金持有设置]]></Title>
-<Description><![CDATA[基金持有设置]]></Description>
+<Title><![CDATA[股票设置]]></Title>
+<Description><![CDATA[]]></Description>
 <PicUrl><![CDATA[]]></PicUrl>
-<Url><![CDATA[http://wx.gxm.cloudns.asia/html/fund_setup.html]]></Url>
+<Url><![CDATA[http://wx.gxm.cloudns.asia/html/stock_setup.html]]></Url>
 </item>
 </Articles>
 </xml>

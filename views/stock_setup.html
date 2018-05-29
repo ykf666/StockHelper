@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="./weui.css"/>
     <style type="text/css">
         body{background-color: #efeff4;}
-
     </style>
     <script src="jquery-3.3.1.min.js"></script>
 </head>
@@ -15,21 +14,13 @@
 <div class="weui-cells weui-cells_form">
     <form>
         <div class="weui-cell">
-            <div class="weui-cell__hd"><label class="weui-label">基金Code：</label></div>
             <div class="weui-cell__bd">
-                <input name="code" class="weui-input" type="number" pattern="[0-9]*">
+                <input name="code" class="weui-input" type="number" pattern="[0-9]*" placeholder="股票代码或名称">
             </div>
         </div>
         <div class="weui-cell">
-            <div class="weui-cell__hd"><label class="weui-label">持仓成本价：</label></div>
             <div class="weui-cell__bd">
-                <input name="cost_price" class="weui-input" type="number" pattern="[0-9]*">
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__hd"><label class="weui-label">持有份额：</label></div>
-            <div class="weui-cell__bd">
-                <input name="count" class="weui-input" type="number" pattern="[0-9]*">
+                <input name="openid" class="weui-input" type="number" pattern="[0-9a-zA-Z]*" placeholder="用户OpenId">
             </div>
         </div>
         <a class="weui-btn weui-btn_primary" id="button">提交</a>
@@ -50,7 +41,7 @@
       $('#button').on('click', function(){
         var data = $('form').serialize();
         var content = JSON.stringify(data).replace(/"/gi, '').replace(/&/gi, '<br>');
-        $.post('http://localhost/api/fund/setup', data,
+        $.post('http://localhost/api/stock/setup', data,
             function(data, status){
                 $('#result_msg').text(status);
                 $('#result_div').show();

@@ -79,12 +79,12 @@ def html(path):
     return static_file(path, root='views')
 
 
-@app.route('/api/fund/setup', method="POST")
-def index():
+@app.route('/api/stock/setup', method="POST")
+def stock_add():
     # 读取post数据
     req_data = request.body.read().decode()
-    app.log.info(req_data)
-    return '{result:success}'
+    print(req_data)
+    return '{"code":0,"result":"成功"}'
 
 
 if __name__ == '__main__':

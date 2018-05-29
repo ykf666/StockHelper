@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>Title</title>
+    <link rel="stylesheet" href="./weui.css"/>
+    <style type="text/css">
+        body{background-color: #efeff4;}
+    </style>
+    <script src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<script type="text/html" id="tpl_navbar"></script>
+<div class="page">
+    <div class="page__bd" style="height: 100%;">
+        <div class="weui-tab">
+            <div class="weui-navbar">
+                <div class="weui-navbar__item weui-bar__item_on">
+                    股票设置
+                </div>
+                <div class="weui-navbar__item">
+                    基金设置
+                </div>
+            </div>
+            <div class="weui-tab__panel">
+                <div id="tab1" class="weui_tab_bd_item weui_tab_bd_item_active pad_6">
+                    <p>页面一</p>
+                </div>
+                <div id="tab2" class="weui_tab_bd_item">
+                    <p>页面二</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function(){
+        $('.weui-navbar__item').on('click', function () {
+            $(this).addClass('weui-bar__item_on').siblings('.weui-bar__item_on').removeClass('weui-bar__item_on');
+        });
+    });
+</script>
+</body>
+</html>
