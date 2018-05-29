@@ -83,7 +83,10 @@ def html(path):
 def stock_add():
     # 读取post数据
     req_data = request.body.read().decode()
-    print(req_data)
+    qs = parse.parse_qs(req_data)
+    stock_code = qs["code"][0]
+    openid = qs["openid"][0]
+    print(qs["code"][0])
     return '{"code":0,"result":"成功"}'
 
 

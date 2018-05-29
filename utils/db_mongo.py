@@ -13,6 +13,10 @@ def find_stocks_by_user(user_openid):
     return result
 
 
+def add_stocks_openid(openid, stock_code):
+    result = stock_set.find_one({"_id": openid})
+
+
 if __name__ == "__main__":
     # stock_set.insert({"_id": "001", "name": "zhangsan", "age": 18})
     print(find_stocks_by_user("001"))
