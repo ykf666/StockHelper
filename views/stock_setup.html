@@ -45,7 +45,7 @@
         var uid = getUrlParam("uid");
         data = data + "&uid=" + uid
         var content = JSON.stringify(data).replace(/"/gi, '').replace(/&/gi, '<br>');
-        $.post('http://localhost/api/stock/setup', data,
+        $.post('http://wx.gxm.cloudns.asia/api/stock/setup', data,
             function(data, status){
                 $('#result_msg').text(status);
                 $('#result_div').show();
