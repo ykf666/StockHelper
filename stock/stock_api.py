@@ -3,6 +3,7 @@
 
 from libs.easyquotation import use
 from utils.db_mongo import find_stocks_user, get_stock_code_by_name
+import re
 
 
 # 实例化新浪免费行情接口
@@ -43,7 +44,6 @@ def summary_stock(openid):
 
 def detail_stock(stock_code):
     result = sina_quotation.real(stock_code)
-    print(result)
     summarystr = ''
     item = result[stock_code]
     name = item['name']
@@ -55,7 +55,7 @@ def detail_stock(stock_code):
     if summarystr:
         summarystr = summarystr + '\n' + name + ': ' + ratio + ', ' + str(float('%.2f' % now))
     else:
-        summarystr = name + ': ' + ratio + ', ' + str(float('%.2f' % now))
+        summarystr = "[" + stock_code + "]" + name + ': ' + ratio + ', ' + str(float('%.2f' % now))
     return summarystr
 
 
@@ -69,4 +69,5 @@ def detail_stock_by_name(stock_name):
 
 
 if __name__ == "__main__":
-    print(summary_stock())
+    if re.match('[A-Z\u4E00-\u9FA5]+', "上汽集团"):
+        print(detail_stock_by_name("上汽集团"))
