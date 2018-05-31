@@ -15,12 +15,7 @@
     <form>
         <div class="weui-cell">
             <div class="weui-cell__bd">
-                <input name="code" class="weui-input" type="number" pattern="[0-9]*" placeholder="股票代码或名称">
-            </div>
-        </div>
-        <div class="weui-cell">
-            <div class="weui-cell__bd">
-                <input name="openid" class="weui-input" type="number" pattern="[0-9a-zA-Z]*" placeholder="用户OpenId">
+                <input name="code" class="weui-input" type="number" pattern="[0-9]*" placeholder="股票代码">
             </div>
         </div>
         <a class="weui-btn weui-btn_primary" id="button">提交</a>
@@ -37,9 +32,18 @@
     </div>
 </div>
 <script type="text/javascript">
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
+
     $(function(){
       $('#button').on('click', function(){
         var data = $('form').serialize();
+        var uid = getUrlParam("uid");
+        data = data + "&uid=" + uid
         var content = JSON.stringify(data).replace(/"/gi, '').replace(/&/gi, '<br>');
         $.post('http://localhost/api/stock/setup', data,
             function(data, status){
@@ -70,7 +74,7 @@
     }
 
     function callback(){
-      WeixinJSBridge.invoke('setPageTitle', {title: '测试测试测试'}, function(res){
+      WeixinJSBridge.invoke('setPageTitle', {title: 'Title'}, function(res){
         $.weui.alert(res.err_msg);
       });
     }

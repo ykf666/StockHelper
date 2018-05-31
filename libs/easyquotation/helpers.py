@@ -37,8 +37,8 @@ def stock_code_path():
     return os.path.join(os.path.dirname(__file__), STOCK_CODE_PATH)
 
 
+# 初始化股票code及name
 def init_stock_infos():
-    """初始化股票code及name"""
     grep_stock_codes = re.compile('~(\d+)(\D+)`')
     response = requests.get(REQUEST_URL)
     stock_infos = grep_stock_codes.findall(response.text)
@@ -62,4 +62,4 @@ def update_stock_infos():
 
 
 if __name__ == "__main__":
-    update_stock_infos()
+    init_stock_infos()

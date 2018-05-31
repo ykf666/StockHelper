@@ -2,14 +2,21 @@
 # coding=utf-8
 
 from libs.easyquotation import use
+from utils.db_mongo import find_stocks_user, get_stock_code_by_name
+
 
 # 实例化新浪免费行情接口
 sina_quotation = use("sina")
 
 
-def summary_stock():
-    # 上证指数，深证成指，创业板指，老板电器，福耀玻璃
-    acodes = ('sh000001', 'sz399001', 'sz399006', '002508', '600660')
+def summary_stock(openid):
+    # 上证指数，深证成指，创业板指
+    acodes_base = ("sh000001", "sz399001", "sz399006")
+    user_stock = find_stocks_user(openid)
+    if user_stock is not None:
+        stocks = user_stock["stock_codes"]
+        acodes_ext = tuple(stocks.split(","))
+    acodes = acodes_base + acodes_ext
     result = sina_quotation.stocks(list(acodes))
     summarystr = ''
     line = 0
@@ -26,7 +33,7 @@ def summary_stock():
             summarystr = summarystr + '\n' + name + ': ' + ratio + ', ' + str(float('%.2f' % now))
         else:
             summarystr = name + ': ' + ratio + ', ' + str(float('%.2f' % now))
-        if line == 2:
+        if line == 3:
             summarystr = summarystr + "\n===================="
         line = line + 1
     return summarystr
@@ -48,6 +55,15 @@ def detail_stock(stock_code):
     else:
         summarystr = name + ': ' + ratio + ', ' + str(float('%.2f' % now))
     return summarystr
+
+
+# 根据股票名称查询
+def detail_stock_by_name(stock_name):
+    result = get_stock_code_by_name(stock_name)
+    if result is not None:
+        return detail_stock(result)
+    else:
+        return "未查询到股票信息，请检查股票名称!"
 
 
 if __name__ == "__main__":

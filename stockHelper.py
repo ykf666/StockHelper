@@ -7,13 +7,17 @@ from libs.bottleplugins.canister import Canister
 from libs.bottleplugins.boot import Boot
 from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
-from stock.stock_api import summary_stock, detail_stock
+from stock.stock_api import summary_stock, detail_stock, detail_stock_by_name
 import re
+from utils.db_mongo import update_stocks_user
+
 
 app = Bottle()
 bottle_config = app.config.load_config("config/app.conf")
 app.install(Canister())
 app.install(Boot())
+SETUP_BASE_URL = "http://wx.gxm.cloudns.asia/html/stock_setup.html?uid="
+logger = app.log
 
 
 @app.route('/', method="GET")
@@ -24,7 +28,7 @@ def index():
     if req_str == 'stock':
         s_content = detail_stock('600903')
     else:
-        s_content = summary_stock()
+        s_content = summary_stock("haha")
     return s_content
 
 
@@ -51,20 +55,24 @@ def wx():
         if re.match('[0-9]{6}', req_content):
             # 根据股票代码查询个股详情
             s_content = detail_stock(req_content)
+        elif re.match('[A-Z\u4E00-\u9FA5]+', req_content):
+            s_content = detail_stock_by_name(req_content)
         else:
             # 获取当日大盘概况
-            s_content = summary_stock()
+            s_content = summary_stock(fromuser)
     elif msgtype == "event":
         eventtype = extract(decrypt_xml, "Event")
         if eventtype == "subscribe":
-            s_content = "欢迎您，感谢订阅股小秘，回复任意文本消息，获取股市行情。如需帮助，请回复'help'指令。"
+            s_content = "欢迎您，感谢订阅股小秘，回复任意文本消息，获取股市行情。如需自定义股票，请回复'setup'指令。"
         else:
             s_content = "success"
     else:
         s_content = "开发中，敬请期待！"
 
-    if req_content == 'help':
-        s_xml = template('send_news', touser=fromuser, fromuser=wx_account, createtime=int(time.time()))
+    setup_url = SETUP_BASE_URL + fromuser
+    if req_content == 'setup':
+        s_xml = template('send_news', touser=fromuser, fromuser=wx_account, createtime=int(time.time()),
+                         setupurl=setup_url)
     else:
         s_xml = template('send_msg', touser=fromuser, fromuser=wx_account, createtime=int(time.time()),
                          content=s_content)
@@ -81,13 +89,17 @@ def html(path):
 
 @app.route('/api/stock/setup', method="POST")
 def stock_add():
-    # 读取post数据
-    req_data = request.body.read().decode()
-    qs = parse.parse_qs(req_data)
-    stock_code = qs["code"][0]
-    openid = qs["openid"][0]
-    print(qs["code"][0])
-    return '{"code":0,"result":"成功"}'
+    try:
+        # 读取post数据
+        req_data = request.body.read().decode()
+        qs = parse.parse_qs(req_data)
+        stock_code = qs["code"][0]
+        openid = qs["uid"][0]
+        logger.info('user %s set stock: %s' % (openid, stock_code))
+        update_stocks_user(openid, stock_code)
+        return '{"code":0,"result":"成功"}'
+    except RuntimeError:
+        return '{"code":-1,"result":"失败"}'
 
 
 if __name__ == '__main__':
