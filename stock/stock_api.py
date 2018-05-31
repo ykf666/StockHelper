@@ -36,7 +36,7 @@ def summary_stock(openid):
         else:
             summarystr = name + ': ' + ratio + ', ' + str(float('%.2f' % now))
         if line == 3:
-            summarystr = summarystr + "\n===================="
+            summarystr = "====================\n" + summarystr
         line = line + 1
     return summarystr
 
