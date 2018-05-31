@@ -16,7 +16,9 @@ def summary_stock(openid):
     if user_stock is not None:
         stocks = user_stock["stock_codes"]
         acodes_ext = tuple(stocks.split(","))
-    acodes = acodes_base + acodes_ext
+        acodes = acodes_base + acodes_ext
+    else:
+        acodes = acodes_base
     result = sina_quotation.stocks(list(acodes))
     summarystr = ''
     line = 0
