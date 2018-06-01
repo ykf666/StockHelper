@@ -2,4 +2,5 @@
 # coding=utf-8
 
 
-from .fund_helpers import get_fund_codes
+from .fund_helpers import update_fund_infos
+
