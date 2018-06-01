@@ -9,5 +9,6 @@ def print_job():
     print('print_job! The time is: %s' % (datetime.now()))
 
 
-def creat_fund_list_file():
+def init_fund_infos_job():
     update_fund_infos()
+

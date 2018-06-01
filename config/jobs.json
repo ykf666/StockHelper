@@ -7,7 +7,7 @@
       "enable": "false"
     },
     {
-      "func": "creat_fund_list_file",
+      "func": "init_fund_infos_job",
       "trigger": "cron",
       "day_of_week": "0",
       "hour": 9,

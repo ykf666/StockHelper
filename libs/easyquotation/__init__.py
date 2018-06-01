@@ -1,4 +1,7 @@
-# coding:utf8
+#!/usr/bin/env python
+# coding=utf-8
+
+
 from .api import *
 from .helpers import update_stock_infos
 
