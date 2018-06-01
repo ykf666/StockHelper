@@ -4,7 +4,6 @@
 import json
 from apscheduler.schedulers.background import BackgroundScheduler
 from cron import taskjobs
-from fund.fund_helpers import update_fund_infos
 from libs.easyquotation.helpers import update_stock_infos
 
 
@@ -18,14 +17,14 @@ class Boot:
     def setup(self, app):
         config = app.config
 
-        # 初始化数据库数据
-        update_fund_infos()
-        update_stock_infos()
-
         # 定时任务配置
         jobs_file = config.get('config_path.jobs_file', './config/jobs.json')
         app.log.info("cron.jobs_file = " + jobs_file)
 
+        # 初始化股票数据
+        update_stock_infos()
+        app.log.info("init stock infos success!")
+        
         with open(jobs_file, 'r') as f:
             conf = json.load(f)
         if "jobs" in conf:

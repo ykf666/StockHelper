@@ -12,7 +12,7 @@ pool = urllib3.PoolManager()
 # 初始化基金信息
 def init_fund_infos():
     data_re = re.compile(r'=.\[(.*?)\];$')
-    item_re = re.compile(r'\[(.*?)\]')
+    item_re = re.compile(r'\[(\".*?\")\]')
     # today = datetime.datetime.now().strftime('%Y-%m-%d')
     r_url = 'http://fund.eastmoney.com/js/fundcode_search.js'
     res_data = pool.request('GET', r_url).data.decode('utf-8')
@@ -20,8 +20,8 @@ def init_fund_infos():
         if line != "":
             for line2 in item_re.findall(line):
                 item_list = line2.split(',')
-                fund_code = item_list[0]
-                fund_name = item_list[2]
+                fund_code = item_list[0].replace("\"", "")
+                fund_name = item_list[2].replace("\"", "")
                 add_fund_info(fund_code, fund_name)
 
 
