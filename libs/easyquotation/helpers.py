@@ -63,3 +63,4 @@ def update_stock_infos():
 
 if __name__ == "__main__":
     init_stock_infos()
+

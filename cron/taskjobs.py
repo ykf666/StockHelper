@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from datetime import datetime
-from fund.fund_helpers import get_fund_codes
+from fund.fund_helpers import update_fund_infos
 
 
 def print_job():
@@ -10,4 +10,4 @@ def print_job():
 
 
 def creat_fund_list_file():
-    get_fund_codes()
+    update_fund_infos()

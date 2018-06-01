@@ -7,6 +7,7 @@ client = MongoClient("127.0.0.1", 27117)
 db = client.gxm
 stock_set = db.stock_set
 user_stock_set = db.user_stock
+fund_set = db.fund_set
 
 
 # 根据openid查询用户关注的股票信息
@@ -57,6 +58,28 @@ def get_stock_code_by_name(name):
     if result is not None:
         return result["code"]
     return None
+
+
+# 添加基金信息
+def add_fund_info(fund_code, fund_name):
+    fund_set.insert_one({"code": fund_code, "name": fund_name})
+
+
+# 查询基金集合总数
+def fund_set_count():
+    return fund_set.count()
+
+
+# 更新基金信息
+def update_fund_info(fund_code, new_name):
+    result = fund_set.find_one({"code": fund_code})
+    if result is None:
+        add_fund_info(fund_code, new_name)
+    else:
+        old_name = result["name"]
+        if new_name != old_name:
+            result["name"] = new_name
+            fund_set.update({"code": fund_code}, {"$set": result})
 
 
 if __name__ == "__main__":
