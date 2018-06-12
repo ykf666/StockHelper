@@ -20,10 +20,6 @@ class Boot:
         # 定时任务配置
         jobs_file = config.get('config_path.jobs_file', './config/jobs.json')
         app.log.info("cron.jobs_file = " + jobs_file)
-
-        # 初始化股票数据
-        update_stock_info_sqlite3()
-        app.log.info("init stock infos success!")
         
         with open(jobs_file, 'r') as f:
             conf = json.load(f)

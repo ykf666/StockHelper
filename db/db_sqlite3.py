@@ -11,10 +11,10 @@ c = conn.cursor()
 def init_db():
     c.execute('''CREATE TABLE stock_set(id INTEGER PRIMARY KEY AUTOINCREMENT, 
             code CHAR(10) NOT NULL, name CHAR(20) NOT NULL);''')
-    c.execute('''CREATE TABLE fund_set(id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            code CHAR(10) NOT NULL, name CHAR(20) NOT NULL);''')
     c.execute('''CREATE TABLE user_stock(id INTEGER PRIMARY KEY AUTOINCREMENT, open_id CHAR(30) NOT NULL, 
             stock_code CHAR(10) NOT NULL);''')
+    c.execute('''CREATE TABLE fund_set(id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            code CHAR(10) NOT NULL, name CHAR(20) NOT NULL);''')
     conn.commit()
     print('init database successful...')
 
