@@ -9,7 +9,7 @@ from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
 from stock.stock_api import summary_stock, detail_stock, detail_stock_by_name
 import re
-from utils.db_mongo import update_stocks_user
+from db.db_mongo import update_stocks_user
 
 
 app = Bottle()

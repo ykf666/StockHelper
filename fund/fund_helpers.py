@@ -3,7 +3,7 @@
 
 import urllib3
 import re
-from utils.db_mongo import add_fund_info, fund_set_count, update_fund_info
+from db.db_mongo import add_fund_info, fund_set_count, update_fund_info
 
 
 pool = urllib3.PoolManager()
