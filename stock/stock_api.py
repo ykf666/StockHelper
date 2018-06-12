@@ -12,15 +12,13 @@ sina_quotation = use("sina")
 
 def summary_stock(openid):
     # 上证指数，深证成指，创业板指
-    acodes_base = ("sh000001", "sz399001", "sz399006")
-    user_stock = find_user_stocks(openid)
-    if user_stock is not None:
-        stocks = user_stock["stock_codes"]
-        acodes_ext = tuple(stocks.split(","))
-        acodes = acodes_base + acodes_ext
+    acodes_base = ["sh000001", "sz399001", "sz399006"]
+    user_stocks = find_user_stocks(openid)
+    if user_stocks is not None:
+        acodes = acodes_base + user_stocks
     else:
         acodes = acodes_base
-    result = sina_quotation.stocks(list(acodes))
+    result = sina_quotation.stocks(acodes)
     summarystr = ''
     line = 0
     for key in result.keys():
@@ -69,5 +67,6 @@ def detail_stock_by_name(stock_name):
 
 
 if __name__ == "__main__":
-    if re.match('[A-Z\u4E00-\u9FA5]+', "上汽集团"):
+    summary_stock("oBBGPwGoZ4mM0u4oP_jkXKvdTtYc")
+    if re.match('^(?=.*[\u4E00-\u9FA5])[A-Z\u4E00-\u9FA5]*$', "上汽集团"):
         print(detail_stock_by_name("上汽集团"))

@@ -63,7 +63,7 @@ def find_user_stocks(open_id):
     cursor = c.execute(sql)
     for row in cursor:
         stocks.append(row[2])
-    return ",".join(stocks)
+    return stocks
 
 
 # 根据股票名称查询code

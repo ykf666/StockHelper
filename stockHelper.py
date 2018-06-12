@@ -55,8 +55,8 @@ def wx():
         if re.match('[0-9]{6}', req_content):
             # 根据股票代码查询个股详情
             s_content = detail_stock(req_content)
-        # elif re.match('^(?=.*[\u4E00-\u9FA5])[A-Z\u4E00-\u9FA5]*$', req_content):
-        #     s_content = detail_stock_by_name(req_content)
+        elif re.match('^(?=.*[\u4E00-\u9FA5])[A-Z\u4E00-\u9FA5]*$', req_content):
+            s_content = detail_stock_by_name(req_content)
         else:
             # 获取当日大盘概况
             s_content = summary_stock(fromuser)
