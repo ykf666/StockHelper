@@ -9,7 +9,7 @@ from wx.wxapi import encrypt, decrypt, wx_account, extract
 import time
 from stock.stock_api import summary_stock, detail_stock, detail_stock_by_name
 import re
-from db.db_mongo import update_stocks_user
+from db.db_sqlite3 import add_user_stock
 
 
 app = Bottle()
@@ -96,8 +96,7 @@ def stock_add():
         stock_code = qs["code"][0]
         openid = qs["uid"][0]
         logger.info('user %s set stock: %s' % (openid, stock_code))
-        update_stocks_user(openid, stock_code)
-        return '{"code":0,"result":"成功"}'
+        return add_user_stock(openid, stock_code)
     except RuntimeError:
         return '{"code":-1,"result":"失败"}'
 

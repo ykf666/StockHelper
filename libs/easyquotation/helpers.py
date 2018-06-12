@@ -4,7 +4,8 @@ import os
 import re
 
 import requests
-from utils.db_mongo import add_stock_info, stock_set_count, update_stock_info
+from db.db_sqlite3 import count_stock_set, clear_stock_set, batch_insert_stock_info
+
 
 STOCK_CODE_PATH = 'stock_codes.conf'
 REQUEST_URL = 'http://www.shdjt.com/js/lib/astock.js'
@@ -37,30 +38,52 @@ def stock_code_path():
     return os.path.join(os.path.dirname(__file__), STOCK_CODE_PATH)
 
 
-# 初始化股票code及name
-def init_stock_infos():
-    grep_stock_codes = re.compile('~(\d+)(\D+)`')
-    response = requests.get(REQUEST_URL)
-    stock_infos = grep_stock_codes.findall(response.text)
-    for stock in stock_infos:
-        code = stock[0]
-        name = stock[1].replace("`", "")
-        add_stock_info(code, name)
+# mongodb初始化股票code及name
+# def init_stock_infos():
+#     grep_stock_codes = re.compile('~(\d+)(\D+)`')
+#     response = requests.get(REQUEST_URL)
+#     stock_infos = grep_stock_codes.findall(response.text)
+#     for stock in stock_infos:
+#         code = stock[0]
+#         name = stock[1].replace("`", "")
+#         add_stock_info(code, name)
 
 
-def update_stock_infos():
-    if stock_set_count() == 0:
-        init_stock_infos()
-    else:
+# mongodb更新股票code及name
+# def update_stock_infos():
+#     if stock_set_count() == 0:
+#         init_stock_infos()
+#     else:
+#         grep_stock_codes = re.compile('~(\d+)(\D+)`')
+#         response = requests.get(REQUEST_URL)
+#         stock_infos = grep_stock_codes.findall(response.text)
+#         for stock in stock_infos:
+#             code = stock[0]
+#             name = stock[1].replace("`", "")
+#             update_stock_info(code, name)
+
+
+# sqlite3初始化股票code及name
+def init_stock_info_sqlite3():
         grep_stock_codes = re.compile('~(\d+)(\D+)`')
         response = requests.get(REQUEST_URL)
         stock_infos = grep_stock_codes.findall(response.text)
+        data = []
         for stock in stock_infos:
             code = stock[0]
             name = stock[1].replace("`", "")
-            update_stock_info(code, name)
+            item = (code, name)
+            data.append(item)
+        batch_insert_stock_info(data)
+
+
+# sqlite3更新股票code及name
+def update_stock_info_sqlite3():
+    if count_stock_set() > 0:
+        clear_stock_set()
+    init_stock_info_sqlite3()
 
 
 if __name__ == "__main__":
-    init_stock_infos()
+    init_stock_info_sqlite3()
 

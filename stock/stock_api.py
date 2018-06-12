@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from libs.easyquotation import use
-from db.db_mongo import find_stocks_user, get_stock_code_by_name
+from db.db_sqlite3 import find_user_stocks, get_stock_code_by_name
 import re
 
 
@@ -13,7 +13,7 @@ sina_quotation = use("sina")
 def summary_stock(openid):
     # 上证指数，深证成指，创业板指
     acodes_base = ("sh000001", "sz399001", "sz399006")
-    user_stock = find_stocks_user(openid)
+    user_stock = find_user_stocks(openid)
     if user_stock is not None:
         stocks = user_stock["stock_codes"]
         acodes_ext = tuple(stocks.split(","))

@@ -2,8 +2,7 @@
 # coding=utf-8
 
 from datetime import datetime
-from libs.easyquotation.helpers import update_stock_infos
-from fund.fund_helpers import update_fund_infos
+from libs.easyquotation.helpers import update_stock_info_sqlite3
 
 
 def print_job():
@@ -11,9 +10,7 @@ def print_job():
 
 
 def init_stock_infos_job():
-    update_stock_infos()
+    update_stock_info_sqlite3()
 
 
-def init_fund_infos_job():
-    update_fund_infos()
 

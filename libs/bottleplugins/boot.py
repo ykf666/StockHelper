@@ -4,7 +4,7 @@
 import json
 from apscheduler.schedulers.background import BackgroundScheduler
 from cron import taskjobs
-from libs.easyquotation.helpers import update_stock_infos
+from libs.easyquotation.helpers import update_stock_info_sqlite3
 
 
 class Boot:
@@ -22,7 +22,7 @@ class Boot:
         app.log.info("cron.jobs_file = " + jobs_file)
 
         # 初始化股票数据
-        update_stock_infos()
+        update_stock_info_sqlite3()
         app.log.info("init stock infos success!")
         
         with open(jobs_file, 'r') as f:
