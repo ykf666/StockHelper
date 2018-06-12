@@ -50,16 +50,22 @@ def wx():
 
     msgtype = extract(decrypt_xml, "MsgType")
     fromuser = extract(decrypt_xml, "FromUserName")
+    setup_url = SETUP_BASE_URL + fromuser
+    s_content = ""
     if msgtype == "text":
         req_content = extract(decrypt_xml, "Content")
-        if re.match('[0-9]{6}', req_content):
-            # 根据股票代码查询个股详情
-            s_content = detail_stock(req_content)
-        elif re.match('^(?=.*[\u4E00-\u9FA5])[A-Z\u4E00-\u9FA5]*$', req_content):
-            s_content = detail_stock_by_name(req_content)
+        if req_content == 'setup':
+            s_xml = template('send_news', touser=fromuser, fromuser=wx_account, createtime=int(time.time()),
+                             setupurl=setup_url)
         else:
-            # 获取当日大盘概况
-            s_content = summary_stock(fromuser)
+            if re.match('[0-9]{6}', req_content):
+                # 根据股票代码查询个股详情
+                s_content = detail_stock(req_content)
+            # elif re.match('^(?=.*[\u4E00-\u9FA5])[A-Z\u4E00-\u9FA5]*$', req_content):
+            #     s_content = detail_stock_by_name(req_content)
+            else:
+                # 获取当日大盘概况
+                s_content = summary_stock(fromuser)
     elif msgtype == "event":
         eventtype = extract(decrypt_xml, "Event")
         if eventtype == "subscribe":
@@ -69,11 +75,7 @@ def wx():
     else:
         s_content = "开发中，敬请期待！"
 
-    setup_url = SETUP_BASE_URL + fromuser
-    if req_content == 'setup':
-        s_xml = template('send_news', touser=fromuser, fromuser=wx_account, createtime=int(time.time()),
-                         setupurl=setup_url)
-    else:
+    if s_content is not None:
         s_xml = template('send_msg', touser=fromuser, fromuser=wx_account, createtime=int(time.time()),
                          content=s_content)
     app.log.info("Response xml: %s" % s_xml)
