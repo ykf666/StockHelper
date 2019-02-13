@@ -56,11 +56,10 @@ def get_random_str(strlen):
 
 
 # 微信公众号配置服务器时，校验加密字符串
-def check_signature():
-    params = {'signature': 'b52ea599227c8caef923088e092ef0ac6a6435c1',
-              'echostr': '2332794040598056927',
-              'timestamp': '1514441631',
-              'nonce': '4233655036'
+def check_signature(signature, timestamp, nonce):
+    params = {'signature': signature,
+              'timestamp': timestamp,
+              'nonce': nonce
               }
     # 排序
     list_param = [wx_token, params["timestamp"], params["nonce"]]

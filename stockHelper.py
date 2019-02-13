@@ -5,7 +5,7 @@ from bottle import Bottle, run, request, template, response, static_file
 from urllib import parse
 from libs.bottleplugins.canister import Canister
 from libs.bottleplugins.boot import Boot
-from wx.wxapi import encrypt, decrypt, wx_account, extract
+from wx.wxapi import encrypt, decrypt, wx_account, extract, check_signature
 import time
 from stock.stock_api import summary_stock, detail_stock, detail_stock_by_name
 import re
@@ -20,19 +20,35 @@ SETUP_BASE_URL = "http://wx.gxm.cloudns.asia/html/stock_setup.html?uid="
 logger = app.log
 
 
+# @app.route('/', method="GET")
+# def index():
+#     # 读取url参数
+#     qs = parse.parse_qs(request.query_string)
+#     req_str = qs["test"][0]
+#     if req_str == 'stock':
+#         s_content = detail_stock('600903')
+#     elif re.match('^(?=.*[\u4E00-\u9FA5])[A-Z\u4E00-\u9FA5]*$', "ST宜化"):
+#         s_content = detail_stock_by_name("*ST宜化")
+#     return s_content
+
+
 @app.route('/', method="GET")
-def index():
+def hello():
+    response.content_type = 'application/xml; charset=utf-8'
     # 读取url参数
     qs = parse.parse_qs(request.query_string)
-    req_str = qs["test"][0]
-    if req_str == 'stock':
-        s_content = detail_stock('600903')
-    elif re.match('^(?=.*[\u4E00-\u9FA5])[A-Z\u4E00-\u9FA5]*$', "ST宜化"):
-        s_content = detail_stock_by_name("*ST宜化")
-    return s_content
+    signature = qs["signature"][0]
+    timestamp = qs["timestamp"][0]
+    nonce = qs["nonce"][0]
+    echostr = qs["echostr"][0]
+    app.log.info("Request signature: %s" % signature)
+    if check_signature(signature, timestamp, nonce):
+        return echostr
+    else:
+        return "fail"
 
 
-@app.route('/wx', method="POST")
+@app.route('/', method="POST")
 def wx():
     response.content_type = 'application/xml; charset=utf-8'
     # 读取url参数
