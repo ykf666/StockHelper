@@ -34,6 +34,7 @@ logger = app.log
 
 @app.route('/', method="GET")
 def hello():
+    app.log.info(request.query_string)
     response.content_type = 'application/xml; charset=utf-8'
     # 读取url参数
     qs = parse.parse_qs(request.query_string)
