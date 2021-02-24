@@ -17,7 +17,7 @@ process = WXBizMsgCrypt.WXBizMsgCrypt(wx_token, wx_encodingAESKey, wx_appid)
 
 def get_access_token():
     resp = get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&"
-               "appid=wx22b402d2c52b8ac1&secret=35f4c38e139897fd17a668eb3144de44")
+               "appid=wx22b402d2c52b8ac1&secret=0c04e10dad27f8b8803d3230c72ec7e3")
     t = resp.text
     d = json.loads(t)
     return d['access_token']

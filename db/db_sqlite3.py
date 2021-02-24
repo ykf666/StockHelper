@@ -71,7 +71,7 @@ def get_stock_code_by_name(name):
     sql = "SELECT code FROM stock_set WHERE name = '" + name + "';"
     c.execute(sql)
     res = c.fetchone()
-    if res.__len__() > 0:
+    if res.__len__ > 0:
         return res[0]
     else:
         return None
