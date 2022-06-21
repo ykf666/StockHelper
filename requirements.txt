@@ -11,7 +11,7 @@ idna==2.6
 lxml==4.1.1
 multidict==3.3.2
 Naked==0.1.31
-numpy==1.13.3
+numpy==1.22.0
 pandas==0.22.0
 pathlib==1.0.1
 Pillow==5.4.1
