@@ -3,7 +3,7 @@ APScheduler==3.4.0
 async-timeout==2.0.0
 bottle==0.12.13
 canister==1.5.1
-certifi==2017.11.5
+certifi==2022.12.7
 chardet==3.0.4
 crypto==1.4.1
 cssselect==1.0.1
